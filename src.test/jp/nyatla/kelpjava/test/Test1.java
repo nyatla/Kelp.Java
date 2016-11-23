@@ -1,37 +1,30 @@
-﻿using System;
-using System.Linq;
-using KelpNet;
-using KelpNet.Functions.Activations;
-using KelpNet.Functions.Connections;
-using KelpNet.Loss;
-using KelpNet.Optimizers;
+﻿package jp.nyatla.kelpjava.test;
 
-namespace KelpNetTester.Tests
-{
+
     //MLPによるXORの学習
     class Test1
     {
         public static void Run()
         {
             //訓練回数
-            const int learningCount = 10000;
+            final int learningCount = 10000;
 
             //訓練データ
             double[][] trainData =
             {
-                new[] { 0.0, 0.0 },
-                new[] { 1.0, 0.0 },
-                new[] { 0.0, 1.0 },
-                new[] { 1.0, 1.0 }
+                { 0.0, 0.0 },
+                { 1.0, 0.0 },
+                { 0.0, 1.0 },
+                { 1.0, 1.0 }
             };
 
             //訓練データラベル
             double[][] trainLabel =
             {
-                new[] { 0.0 },
-                new[] { 1.0 },
-                new[] { 1.0 },
-                new[] { 0.0 }
+                { 0.0 },
+                { 1.0 },
+                { 1.0 },
+                { 0.0 }
             };
 
             //ネットワークの構成は FunctionStack に書き連ねる
