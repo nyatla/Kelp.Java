@@ -1,5 +1,7 @@
 ﻿package jp.nyatla.kelpjava.test;
 
+import jp.nyatla.kelpjava.FunctionStack;
+
 
     //MLPによるXORの学習
     class Test1

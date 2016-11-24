@@ -3,139 +3,175 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.nyatla.kelpjava.common.IDuplicatable;
+import jp.nyatla.kelpjava.common.Mother;
 import jp.nyatla.kelpjava.common.NdArray;
 
-    //FunctionStackに積み上げるFunctionの基底クラス
-    //[Serializable]
-    public abstract class Function
-    {
-        public String Name;
+/**
+ * FunctionStackに積み上げるFunctionの基底クラス [Serializable]
+ */
+public abstract class Function implements IDuplicatable
+{
+	final public String name;
+	final public List<OptimizeParameter> parameters = new ArrayList<OptimizeParameter>();
+	final protected int outputCount;
+	final protected int inputCount;
 
-        public List<OptimizeParameter> Parameters = new ArrayList<OptimizeParameter>();
+	protected Function(String i_name) {
+		this(i_name, 0, 0);
+	}
+	/**
+	 * コンストラクタ
+	 * @param i_name
+	 * @param i_inputCount
+	 * @param i_oututCount
+	 */
+	protected Function(String i_name, int i_inputCount, int i_oututCount) {
+		this.name = i_name;
+		this.inputCount = i_inputCount;
+		this.outputCount = i_oututCount;
+	}
+	/**
+	 * コピーコンストラクタ
+	 * @param i_src
+	 */
+	protected Function(Function i_src)
+	{
+		this.name=i_src.name;
+		for(OptimizeParameter i:i_src.parameters){
+			this.parameters.add((OptimizeParameter) i.deepCopy());
+		}
+		this.outputCount=i_src.outputCount;
+		this.inputCount=i_src.inputCount;
+	}
 
-        protected int OutputCount;
-        protected int InputCount;
-        protected Function(String i_name)
-        {
-        	this(i_name,0,0);
-        }
+	/**
+	 * 外部公開用
+	 * @param i_x
+	 * @return
+	 */
+	public NdArray[] forward(NdArray[] i_x) {
+		return this.forwardSingle(i_x);
+	}
 
-        //コンストラクタ
-        protected Function(String i_name, int i_inputCount, int i_oututCount)
-        {
-            this.Name = i_name;
-            this.InputCount = i_inputCount;
-            this.OutputCount = i_oututCount;
-        }
+	/**
+	 * 
+	 * @param i_gy
+	 * @return
+	 */
+	public NdArray[] backward(NdArray[] i_gy)
+	{
+		// バッチは内部で割引を行うためgy.Lengthでの加算の必要がない
+		for (int i = 0; i < this.parameters.size(); i++) {
+			this.parameters.get(i).trainCount++;
+		}
+		return this.backwardSingle(i_gy);
+	}
 
-        //外部公開用
-        public NdArray[] Forward(NdArray[] i_x)
-        {
-            return this.ForwardSingle(i_x);
-        }
+	/**
+	 * 通常であれば非バッチ呼び出しを仮想とするが、バッチ専用関数がスタンダードで非バッチ関数がイレギュラーであるため
+	 * @param x
+	 * @return
+	 */
+	protected abstract NdArray[] forwardSingle(NdArray[] x);
 
-        public NdArray[] Backward(NdArray[] i_gy)
-        {
-            //バッチは内部で割引を行うためgy.Lengthでの加算の必要がない
-        	for(int i=0;i<this.Parameters.size();i++){
-        		this.Parameters.get(i).trainCount++;
-        	}
-            return this.BackwardSingle(i_gy);
-        }
+	protected abstract NdArray[] backwardSingle(NdArray[] gy);
 
-        //通常であれば非バッチ呼び出しを仮想とするが、
-        //バッチ専用関数がスタンダードで非バッチ関数がイレギュラーであるため
-        protected abstract NdArray[] ForwardSingle(NdArray[] x);
-        protected abstract NdArray[] BackwardSingle(NdArray[] gy);
+	/**
+	 * 外部公開用非バッチ関数
+	 * @param i_x
+	 * @return
+	 */
+	public NdArray forward(NdArray i_x) {
+		return this.forwardSingle(i_x);
+	}
 
-        //外部公開用非バッチ関数
-        public NdArray Forward(NdArray i_x)
-        {
-            return this.ForwardSingle(i_x);
-        }
+	public NdArray backward(NdArray i_gy) {
+		for (int i = 0; i < this.parameters.size(); i++) {
+			this.parameters.get(i).trainCount++;
+		}
+		return this.backwardSingle(i_gy);
+	}
 
-        public NdArray Backward(NdArray i_gy)
-        {
-        	for(int i=0;i<this.Parameters.size();i++){
-        		this.Parameters.get(i).trainCount++;
-        	}
-            return this.BackwardSingle(i_gy);
-        }
+	/**
+	 * 任意で個別に非バッチ関数が書けるように用意
+	 * @param x
+	 * @return
+	 */
+	protected NdArray forwardSingle(NdArray i_x) {
+		NdArray[] na = { i_x };
+		return this.forwardSingle(na)[0];
+	}
+	/**
+	 * 
+	 * @param gy
+	 * @return
+	 */
+	protected NdArray backwardSingle(NdArray i_gy) {
+		NdArray[] na = { i_gy };
+		return this.backwardSingle(na)[0];
+	}
 
-        //任意で個別に非バッチ関数が書けるように用意
-        protected NdArray ForwardSingle(NdArray x)
-        {
-        	NdArray[] na={x};
-            return this.ForwardSingle(na)[0];
-        }
+	/**
+	 * 評価関数
+	 * @param input
+	 * @return
+	 */
+	public NdArray[] predict(NdArray[] i_input) {
+		return this.forwardSingle(i_input);
+	}
 
-        protected NdArray BackwardSingle(NdArray gy)
-        {
-        	NdArray[] na={gy};
-            return this.BackwardSingle(na)[0];
-        }
+	public NdArray predict(NdArray i_input) {
+		return this.forwardSingle(i_input);
+	}
 
-        //評価関数
-        public NdArray[] Predict(NdArray[] input)
-        {
-            return this.ForwardSingle(input);
-        }
+	/**
+	 * ある処理実行後に特定のデータを初期値に戻す処理
+	 */
+	public void resetState() {
+		return;
+	}
 
-        public NdArray Predict(NdArray input)
-        {
-            return this.ForwardSingle(input);
-        }
+	/**
+	 * 名前を返します。
+	 * @return
+	 */
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-        //ある処理実行後に特定のデータを初期値に戻す処理
-        public void ResetState()
-        {
-        	return;
-        }
+	protected void initWeight(NdArray i_array) {
+		this.initWeight(i_array, 1.0);
+	}
 
-        /**
-         * 名前を返します。
-         * @return
-         */
-        @Override
-        public String toString()
-        {
-            return this.Name;
-        }
-        protected void InitWeight(NdArray array)
-        {
-        	this.InitWeight(array,1.0);
-        }
+	/**
+	 * 初期値が入力されなかった場合、この関数で初期化を行う
+	 * @param array
+	 * @param masterScale
+	 */
+	protected void initWeight(NdArray i_array, double i_masterScale) {
+		double localScale = 1 / Math.sqrt(2);
+		int fanIn = this.getFans(i_array.shape);
+		double s = localScale * Math.sqrt(2.0 / fanIn);
 
-        //初期値が入力されなかった場合、この関数で初期化を行う
-        protected void InitWeight(NdArray array, double masterScale)
-        {
-            double localScale = 1 / Math.sqrt(2);
-            int fanIn = this.GetFans(array.shape);
-            double s = localScale * Math.sqrt(2.0 / fanIn);
+		for (int i = 0; i < i_array.length(); i++) {
+			i_array.data[i] = this.normal(s) * i_masterScale;
+		}
+	}
 
-            for (int i = 0; i < array.length(); i++)
-            {
-                array.data[i] = this.Normal(s) * masterScale;
-            }
-        }
+	private double normal(double i_scale) {
+		Mother.Sigma = i_scale;
+		return Mother.RandomNormal();
+	}
 
+	private int getFans(int[] i_shape) {
+		int result = 1;
 
-        
-        private double Normal(double scale)
-        {
-            Mother.Sigma = scale;
-            return Mother.RandomNormal();
-        }
+		for (int i = 1; i < i_shape.length; i++) {
+			result *= i_shape[i];
+		}
 
-        private int GetFans(int[] shape)
-        {
-            int result = 1;
-
-            for (int i = 1; i < shape.length; i++)
-            {
-                result *= shape[i];
-            }
-
-            return result;
-        }
-    }
+		return result;
+	}
+}

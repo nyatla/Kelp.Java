@@ -7,19 +7,26 @@ import java.util.List;
  * NumpyのNdArrayを模したクラス N次元のArrayクラスを入力に取り、内部的には1次元配列として保持する事で動作を模倣している
  * 
  */
-public class NdArray implements Cloneable {
+final public class NdArray implements IDuplicatable
+{
 	final public double[] data;
 	final public int[] shape;
 
-	public NdArray(double[] i_data, int[] i_shape) {
-		// コンストラクタはコピーを作成する
+	public NdArray(double[] i_data, int[] i_shape)
+	{
+		//配列は複製して保持します。
 		this.data = i_data.clone();
 		this.shape = i_shape.clone();
 	}
 
-	public NdArray(NdArray i_ndArray) {
-		// コンストラクタはコピーを作成する
-		this(i_ndArray.data, i_ndArray.shape);
+	/**
+	 * コピーコンストラクタ
+	 * @param i_ndArray
+	 */
+	protected NdArray(NdArray i_src)
+	{
+		this.data=i_src.data.clone();
+		this.shape=i_src.shape.clone();
 	}
 
 	public int length() {
@@ -295,7 +302,16 @@ public class NdArray implements Cloneable {
 	}
 
 	@Override
-	public Object clone() {
+	public Object deepCopy() {
 		return new NdArray(this);
 	}
+	public static NdArray[] deepCopy(NdArray[] i_src){
+		NdArray[] r=new NdArray[i_src.length];
+		for(int i=0;i<r.length;i++){
+			r[i]=(NdArray) i_src[i].deepCopy();
+		}
+		return r;
+	}
+
+
 }
