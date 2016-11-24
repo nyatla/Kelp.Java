@@ -253,7 +253,8 @@ public class NdArray implements Cloneable {
 			// 約数を調査してピッタリなら括弧を出力
 			if (i != this.length() - 1) {
 				for (int j = 0; j < CommonDivisorList.size(); j++) {
-					if ((i + 1) % CommonDivisorList.get(j) == 0) {
+					int commonDivisor =CommonDivisorList.get(j);
+					if ((i + 1) % commonDivisor == 0) {
 						sb.append("]");
 						closer++;
 					}
@@ -270,14 +271,16 @@ public class NdArray implements Cloneable {
 
 					// 括弧前のインデント
 					for (int j = 0; j < CommonDivisorList.size(); j++) {
-						if ((i + 1) % CommonDivisorList.get(j) != 0) {
+						int commonDivisor =CommonDivisorList.get(j);
+						if ((i + 1) % commonDivisor != 0) {
 							sb.append(" ");
 						}
 					}
 				}
 
 				for (int j = 0; j < CommonDivisorList.size(); j++) {
-					if ((i + 1) % CommonDivisorList.get(j) == 0) {
+					int commonDivisor =CommonDivisorList.get(j);
+					if ((i + 1) % commonDivisor == 0) {
 						sb.append("[");
 					}
 				}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using KelpNet.Common;
 #if !DEBUG
 using System.Threading.Tasks;
@@ -13,8 +12,8 @@ namespace KelpNet.Functions
     public abstract class NeedPreviousDataFunction : Function
     {
         //後入れ先出しリスト
-        private List<NdArray[]> _prevInput = new List<NdArray[]>();
-        private List<NdArray[]> _prevOutput = new List<NdArray[]>();
+        private readonly List<NdArray[]> _prevInput = new List<NdArray[]>();
+        private readonly List<NdArray[]> _prevOutput = new List<NdArray[]>();
 
         protected abstract NdArray NeedPreviousForward(NdArray x);
         protected abstract NdArray NeedPreviousBackward(NdArray gy, NdArray prevInput, NdArray prevOutput);
@@ -25,16 +24,16 @@ namespace KelpNet.Functions
 
         protected override NdArray ForwardSingle(NdArray x)
         {
-            this._prevInput.Add(new[] { x });
+            this._prevInput.Add(new[] { new NdArray(x) });
             var result = this.NeedPreviousForward(x);
             this._prevOutput.Add(new[] { result });
 
             return result;
         }
 
-
         protected override NdArray[] ForwardSingle(NdArray[] x)
         {
+            //コピーを格納
             NdArray[] prevInput = new NdArray[x.Length];
             for (int i = 0; i < prevInput.Length; i++)
             {
@@ -97,6 +96,28 @@ namespace KelpNet.Functions
 #endif
 
             return result;
+        }
+
+        public override NdArray Predict(NdArray input)
+        {
+            return this.NeedPreviousForward(input);
+        }
+
+        public override NdArray[] Predict(NdArray[] x)
+        {
+            NdArray[] prevoutput = new NdArray[x.Length];
+#if DEBUG
+            for(int i = 0; i < x.Length; i ++)
+#else
+            Parallel.For(0, x.Length, i =>
+#endif
+            {
+                prevoutput[i] = this.NeedPreviousForward(x[i]);
+            }
+#if !DEBUG
+            );
+#endif
+            return prevoutput;
         }
     }
 }
