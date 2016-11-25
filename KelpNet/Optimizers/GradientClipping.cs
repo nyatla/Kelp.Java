@@ -20,16 +20,16 @@ namespace KelpNet.Optimizers
             //_sum_sqnorm
             double s = 0.0;
 
-            for (int i = 0; i < Parameters.Count; i++)
+            for (int i = 0; i < this.Parameters.Count; i++)
             {
-                for (int j = 0; j < Parameters[i].Length; j++)
+                for (int j = 0; j < this.Parameters[i].Length; j++)
                 {
-                    s += Math.Pow(Parameters[i].Grad.Data[j], 2);
+                    s += Math.Pow(this.Parameters[i].Grad.Data[j], 2);
                 }
             }
 
-            var norm = Math.Sqrt(s);
-            var rate = this.Threshold / norm;
+            double norm = Math.Sqrt(s);
+            double rate = this.Threshold / norm;
 
             if (rate < 1)
             {
@@ -39,7 +39,7 @@ namespace KelpNet.Optimizers
                 Parallel.For(0, this.Parameters.Count, i =>
 #endif
                 {
-                    var parameter = Parameters[i];
+                    OptimizeParameter parameter = this.Parameters[i];
 
                     for (int j = 0; j < parameter.Length; j++)
                     {
