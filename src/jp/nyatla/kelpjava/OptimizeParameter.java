@@ -8,7 +8,18 @@ final public class OptimizeParameter implements IDuplicatable
 	final public String name;
 	final public NdArray param;
 	final public NdArray grad;
-
+	/**
+	 * コピーコンストラクタ
+	 * @param i_src
+	 */
+	protected OptimizeParameter(OptimizeParameter i_src)
+	{
+		this.name=i_src.name;
+		this.grad=(NdArray) i_src.grad.deepCopy();
+		this.param=(NdArray) i_src.param.deepCopy();
+		this.trainCount=i_src.trainCount;
+	}
+	
 	/** Updateを行わずに実行されたBackwardの回数をカウントし、バッチ更新時に使用する*/
 	public int trainCount;
 
@@ -22,17 +33,7 @@ final public class OptimizeParameter implements IDuplicatable
 		this.grad = grad;
 		this.name = name;
 	}
-	/**
-	 * コピーコンストラクタ
-	 * @param i_src
-	 */
-	protected OptimizeParameter(OptimizeParameter i_src)
-	{
-		this.name=i_src.name;
-		this.grad=(NdArray) i_src.grad.deepCopy();
-		this.param=(NdArray) i_src.param.deepCopy();
-		this.trainCount=i_src.trainCount;
-	}
+
 
 	/**
 	 * 傾き・バッチカウントを初期化する。

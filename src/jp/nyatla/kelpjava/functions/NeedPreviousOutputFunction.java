@@ -15,18 +15,10 @@ public abstract class NeedPreviousOutputFunction extends Function {
 	// 後入れ先出しリスト
 	final private List<NdArray[]> _prevOutput = new ArrayList<NdArray[]>();
 
-	protected abstract NdArray NeedPreviousForward(NdArray i_x);
+	protected abstract NdArray needPreviousForward(NdArray i_x);
 
-	protected abstract NdArray NeedPreviousBackward(NdArray i_gy,NdArray i_prevOutput);
+	protected abstract NdArray needPreviousBackward(NdArray i_gy,NdArray i_prevOutput);
 
-	protected NeedPreviousOutputFunction(String i_name) {
-		this(i_name, 0, 0);
-	}
-
-	protected NeedPreviousOutputFunction(String i_name, int i_inputCount,int i_oututCount) {
-		super(i_name, i_inputCount, i_oututCount);
-	}
-	
 	/**
 	 * コピーコンストラクタ
 	 * @param i_src
@@ -36,11 +28,22 @@ public abstract class NeedPreviousOutputFunction extends Function {
 		for(NdArray[] i:i_src._prevOutput){
 			this._prevOutput.add(NdArray.deepCopy(i));
 		}
+	}	
+	
+	protected NeedPreviousOutputFunction(String i_name) {
+		this(i_name, 0, 0);
 	}
 
+	protected NeedPreviousOutputFunction(String i_name, int i_inputCount,int i_oututCount) {
+		super(i_name, i_inputCount, i_oututCount);
+	}
+	
+
+
 	@Override
-	protected NdArray forwardSingle(NdArray i_x) {
-		NdArray result = this.NeedPreviousForward(i_x);
+	protected NdArray forwardSingle(NdArray i_x)
+	{
+		NdArray result = this.needPreviousForward(i_x);
 		this._prevOutput.add(new NdArray[] { result });
 		return result;
 	}
@@ -50,7 +53,7 @@ public abstract class NeedPreviousOutputFunction extends Function {
 		NdArray[] prevoutput = new NdArray[i_x.length];
 
 		for (int i = 0; i < i_x.length; i++) {
-			prevoutput[i] = this.NeedPreviousForward(i_x[i]);
+			prevoutput[i] = this.needPreviousForward(i_x[i]);
 		}
 		this._prevOutput.add(prevoutput);
 
@@ -62,7 +65,7 @@ public abstract class NeedPreviousOutputFunction extends Function {
 		NdArray prevOutput = this._prevOutput.get(this._prevOutput.size() - 1)[0];
 		this._prevOutput.remove(this._prevOutput.size() - 1);
 
-		return this.NeedPreviousBackward(i_gy, prevOutput);
+		return this.needPreviousBackward(i_gy, prevOutput);
 	}
 
 	@Override
@@ -73,21 +76,21 @@ public abstract class NeedPreviousOutputFunction extends Function {
 		NdArray[] result = new NdArray[i_gy.length];
 
 		for (int i = 0; i < i_gy.length; i++) {
-			result[i] = this.NeedPreviousBackward(i_gy[i], prevOutput[i]);
+			result[i] = this.needPreviousBackward(i_gy[i], prevOutput[i]);
 		}
 		return result;
 	}
 
 	@Override
 	public NdArray predict(NdArray i_input) {
-		return this.NeedPreviousForward(i_input);
+		return this.needPreviousForward(i_input);
 	}
 
 	@Override
 	public NdArray[] predict(NdArray[] i_x) {
 		NdArray[] prevoutput = new NdArray[i_x.length];
 		for (int i = 0; i < i_x.length; i++) {
-			prevoutput[i] = this.NeedPreviousForward(i_x[i]);
+			prevoutput[i] = this.needPreviousForward(i_x[i]);
 		}
 		return prevoutput;
 	}

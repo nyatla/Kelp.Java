@@ -1,37 +1,58 @@
-﻿using System;
-using KelpNet.Common;
+﻿package jp.nyatla.kelpjava.functions.activations;
 
-namespace KelpNet.Functions.Activations
-{
-    [Serializable]
-    public class Sigmoid : NeedPreviousOutputFunction
+import jp.nyatla.kelpjava.common.NdArray;
+import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
+
+	//[Serializable]
+    final public class Sigmoid extends NeedPreviousOutputFunction
     {
-        public Sigmoid(string name = "Sigmoid") : base(name)
+    	/**
+    	 * コピーコンストラクタ
+    	 * @param i_src
+    	 */
+        public Sigmoid(Sigmoid i_src)
         {
+        	super(i_src);
+        }    	
+    	
+        public Sigmoid()
+        {
+        	this("Sigmoid");
+        }
+        public Sigmoid(String i_name)
+        {
+        	super(i_name);
         }
 
-        protected override NdArray NeedPreviousForward(NdArray x)
-        {
-            double[] y = new double[x.Length];
 
-            for (int i = 0; i < x.Length; i++)
+        @Override
+        protected NdArray needPreviousForward(NdArray i_x)
+        {
+            double[] y = new double[i_x.length()];
+
+            for (int i = 0; i < i_x.length(); i++)
             {
-                y[i] = 1 / (1 + Math.Exp(-x.Data[i]));
+                y[i] = 1 / (1 + Math.exp(-i_x.data[i]));
             }
 
-            return new NdArray(y, x.Shape);
+            return new NdArray(y, i_x.shape);
         }
 
-        protected override NdArray NeedPreviousBackward(NdArray gy, NdArray prevOutput)
+        @Override
+        protected NdArray needPreviousBackward(NdArray gy, NdArray prevOutput)
         {
-            double[] gx = new double[gy.Length];
+            double[] gx = new double[gy.length()];
 
-            for (int i = 0; i < gy.Length; i++)
+            for (int i = 0; i < gy.length(); i++)
             {
-                gx[i] = gy.Data[i] * prevOutput.Data[i] * (1 - prevOutput.Data[i]);
+                gx[i] = gy.data[i] * prevOutput.data[i] * (1 - prevOutput.data[i]);
             }
 
-            return new NdArray(gx, gy.Shape);
+            return new NdArray(gx, gy.shape);
         }
+		@Override
+		public Object deepCopy() {
+			return new Sigmoid(this);
+		}
     }
-}
+

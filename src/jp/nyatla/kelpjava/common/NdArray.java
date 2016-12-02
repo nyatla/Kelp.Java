@@ -7,32 +7,27 @@ import java.util.List;
  * NumpyのNdArrayを模したクラス N次元のArrayクラスを入力に取り、内部的には1次元配列として保持する事で動作を模倣している
  * 
  */
-final public class NdArray implements IDuplicatable
-{
+final public class NdArray implements IDuplicatable {
 	final public double[] data;
 	final public int[] shape;
-
-	public NdArray(double[] i_data, int[] i_shape)
-	{
-		//配列は複製して保持します。
+	/**
+	 * コピーコンストラクタ
+	 * 
+	 * @param i_ndArray
+	 */
+	public NdArray(NdArray i_src) {
+		this.data = i_src.data.clone();
+		this.shape = i_src.shape.clone();
+	}
+	
+	public NdArray(double[] i_data, int[] i_shape) {
+		// 配列は複製して保持します。
 		this.data = i_data.clone();
 		this.shape = i_shape.clone();
 	}
-
-	/**
-	 * コピーコンストラクタ
-	 * @param i_ndArray
-	 */
-	protected NdArray(NdArray i_src)
-	{
-		this.data=i_src.data.clone();
-		this.shape=i_src.shape.clone();
-	}
-
 	public int length() {
 		return this.data.length;
 	}
-
 	public int rank() {
 		return this.shape.length;
 	}
@@ -62,10 +57,10 @@ final public class NdArray implements IDuplicatable
 		return new NdArray(resutlArray, baseArray.shape);
 	}
 
-	// public static NdArray Zeros(params int[] shape)
-	// {
-	// return new NdArray(new double[ShapeToArrayLength(shape)], shape);
-	// }
+	public static NdArray zeros(int... i_shape) {
+		return new NdArray(new double[shapeToArrayLength(i_shape)], i_shape);
+	}
+
 	//
 	// public static NdArray Ones(params int[] shape)
 	// {
@@ -79,29 +74,32 @@ final public class NdArray implements IDuplicatable
 	// return new NdArray(resutlArray, shape);
 	// }
 	//
-	// static int ShapeToArrayLength(params int[] shapes)
-	// {
-	// int result = 1;
-	//
-	// foreach (int shape in shapes)
-	// {
-	// result *= shape;
-	// }
-	//
-	// return result;
-	// }
-	//
-	// public static NdArray[] FromArray(Array[] data)
-	// {
-	// NdArray[] result = new NdArray[data.Length];
-	//
-	// for (int i = 0; i < result.Length; i++)
-	// {
-	// result[i] = FromArray(data[i]);
-	// }
-	//
-	// return result;
-	// }
+	private static int shapeToArrayLength(int[] i_shapes) {
+		int result = 1;
+		for (int i = 0; i < i_shapes.length; i++) {
+			result *= i_shapes[i];
+		}
+		return result;
+	}
+
+	public static NdArray[] fromArray(double[][] data) {
+		NdArray[] result = new NdArray[data.length];
+
+		for (int i = 0; i < result.length; i++) {
+			result[i] = fromArray(data[i]);
+		}
+		return result;
+	}
+
+	public static NdArray fromArray(double[] i_data) {
+		double[] resultData = new double[i_data.length];
+		int[] resultShape;
+		// 1次元の配列に制限
+		System.arraycopy(i_data, 0, resultData, 0, resultData.length);
+		resultShape = new int[] { i_data.length };
+		return new NdArray(resultData, resultShape);
+	}
+
 	//
 	// public static NdArray FromArray(Array data)
 	// {
@@ -260,7 +258,7 @@ final public class NdArray implements IDuplicatable
 			// 約数を調査してピッタリなら括弧を出力
 			if (i != this.length() - 1) {
 				for (int j = 0; j < CommonDivisorList.size(); j++) {
-					int commonDivisor =CommonDivisorList.get(j);
+					int commonDivisor = CommonDivisorList.get(j);
 					if ((i + 1) % commonDivisor == 0) {
 						sb.append("]");
 						closer++;
@@ -278,7 +276,7 @@ final public class NdArray implements IDuplicatable
 
 					// 括弧前のインデント
 					for (int j = 0; j < CommonDivisorList.size(); j++) {
-						int commonDivisor =CommonDivisorList.get(j);
+						int commonDivisor = CommonDivisorList.get(j);
 						if ((i + 1) % commonDivisor != 0) {
 							sb.append(" ");
 						}
@@ -286,7 +284,7 @@ final public class NdArray implements IDuplicatable
 				}
 
 				for (int j = 0; j < CommonDivisorList.size(); j++) {
-					int commonDivisor =CommonDivisorList.get(j);
+					int commonDivisor = CommonDivisorList.get(j);
 					if ((i + 1) % commonDivisor == 0) {
 						sb.append("[");
 					}
@@ -305,13 +303,13 @@ final public class NdArray implements IDuplicatable
 	public Object deepCopy() {
 		return new NdArray(this);
 	}
-	public static NdArray[] deepCopy(NdArray[] i_src){
-		NdArray[] r=new NdArray[i_src.length];
-		for(int i=0;i<r.length;i++){
-			r[i]=(NdArray) i_src[i].deepCopy();
+
+	public static NdArray[] deepCopy(NdArray[] i_src) {
+		NdArray[] r = new NdArray[i_src.length];
+		for (int i = 0; i < r.length; i++) {
+			r[i] = (NdArray) i_src[i].deepCopy();
 		}
 		return r;
 	}
-
 
 }

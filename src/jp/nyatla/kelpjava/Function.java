@@ -16,7 +16,20 @@ public abstract class Function implements IDuplicatable
 	final public List<OptimizeParameter> parameters = new ArrayList<OptimizeParameter>();
 	final protected int outputCount;
 	final protected int inputCount;
-
+	/**
+	 * コピーコンストラクタ
+	 * @param i_src
+	 */
+	protected Function(Function i_src)
+	{
+		this.name=i_src.name;
+		for(OptimizeParameter i:i_src.parameters){
+			this.parameters.add((OptimizeParameter) i.deepCopy());
+		}
+		this.outputCount=i_src.outputCount;
+		this.inputCount=i_src.inputCount;
+	}
+	
 	protected Function(String i_name) {
 		this(i_name, 0, 0);
 	}
@@ -31,19 +44,7 @@ public abstract class Function implements IDuplicatable
 		this.inputCount = i_inputCount;
 		this.outputCount = i_oututCount;
 	}
-	/**
-	 * コピーコンストラクタ
-	 * @param i_src
-	 */
-	protected Function(Function i_src)
-	{
-		this.name=i_src.name;
-		for(OptimizeParameter i:i_src.parameters){
-			this.parameters.add((OptimizeParameter) i.deepCopy());
-		}
-		this.outputCount=i_src.outputCount;
-		this.inputCount=i_src.inputCount;
-	}
+
 
 	/**
 	 * 外部公開用

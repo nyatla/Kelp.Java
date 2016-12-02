@@ -15,6 +15,22 @@ public class FunctionStack extends Function {
 	 */
 	final public List<Function> functions = new ArrayList<Function>();
 	/**
+	 * コピーコンストラクタ
+	 * @param i_src
+	 */
+	public FunctionStack(FunctionStack i_src) {
+		super(i_src);
+		for (Function i : i_src.functions) {
+			this.functions.add((Function) i.deepCopy());
+		}
+		if (i_src.optimizers != null) {
+			this.optimizers = Optimizer.deepCopy(i_src.optimizers);
+		}
+	}
+
+	
+	
+	/**
 	 * Optimizerをココで保持する
 	 */
 	private Optimizer[] optimizers;
@@ -36,15 +52,6 @@ public class FunctionStack extends Function {
 		}
 	}
 
-	public FunctionStack(FunctionStack i_src) {
-		super(i_src);
-		for (Function i : i_src.functions) {
-			this.functions.add((Function) i.deepCopy());
-		}
-		if (i_src.optimizers != null) {
-			this.optimizers = Optimizer.deepCopy(i_src.optimizers);
-		}
-	}
 
 	/**
 	 * Functionとして呼び出された時にバトンを渡す

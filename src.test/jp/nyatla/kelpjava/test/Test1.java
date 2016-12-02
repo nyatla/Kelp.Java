@@ -1,6 +1,9 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
+import jp.nyatla.kelpjava.functions.activations.Sigmoid;
+import jp.nyatla.kelpjava.functions.connections.Linear;
+import jp.nyatla.kelpjava.optimizers.MomentumSGD;
 
 
     //MLPによるXORの学習
@@ -31,19 +34,19 @@ import jp.nyatla.kelpjava.FunctionStack;
 
             //ネットワークの構成は FunctionStack に書き連ねる
             FunctionStack nn = new FunctionStack(
-                new Linear(2, 2, name: "l1 Linear"),
-                new Sigmoid(name: "l1 Sigmoid"),
-                new Linear(2, 2, name: "l2 Linear")
+                new Linear(2, 2,"l1 Linear"),
+                new Sigmoid("l1 Sigmoid"),
+                new Linear(2, 2,"l2 Linear")
             );
 
             //optimizerを宣言
             nn.SetOptimizer(new MomentumSGD());
 
             //訓練ループ
-            Console.WriteLine("Training...");
+            System.out.println("Training...");
             for (int i = 0; i < learningCount; i++)
             {
-                for (int j = 0; j < trainData.Length; j++)
+                for (int j = 0; j < trainData.length; j++)
                 {
                     //訓練実行時にロス関数を記述
                     Trainer.Train(nn, trainData[j], trainLabel[j], LossFunctions.SoftmaxCrossEntropy);

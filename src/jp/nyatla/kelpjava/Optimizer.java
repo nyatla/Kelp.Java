@@ -12,6 +12,11 @@ import jp.nyatla.kelpjava.common.IDuplicatable;
 public abstract class Optimizer implements IDuplicatable
 {
 	/**
+	 * 更新回数のカウント
+	 */
+	protected long updateCount = 1;
+	final protected List<OptimizeParameter> parameters = new ArrayList<OptimizeParameter>();
+	/**
 	 * コピーコンストラクタ
 	 * 
 	 * @param i_src
@@ -23,12 +28,10 @@ public abstract class Optimizer implements IDuplicatable
 			this.parameters.add((OptimizeParameter) i.deepCopy());
 		}
 	}
+	protected Optimizer()
+	{
+	}
 
-	/**
-	 * 更新回数のカウント
-	 */
-	protected long updateCount = 1;
-	final protected List<OptimizeParameter> parameters = new ArrayList<OptimizeParameter>();
 
 	/**
 	 * 更新回数のカウントを取りつつ更新処理を呼び出す
