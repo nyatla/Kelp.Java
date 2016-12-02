@@ -13,27 +13,19 @@ public class FunctionStack extends Function {
 	/**
 	 * すべての層がココにFunctionクラスとして保管される
 	 */
-	final public List<Function> functions = new ArrayList<Function>();
+	final public Function[] functions;
 	/**
 	 * コピーコンストラクタ
 	 * @param i_src
 	 */
 	public FunctionStack(FunctionStack i_src) {
 		super(i_src);
-		for (Function i : i_src.functions) {
-			this.functions.add((Function) i.deepCopy());
-		}
-		if (i_src.optimizers != null) {
-			this.optimizers = Optimizer.deepCopy(i_src.optimizers);
+		this.functions=new Function[i_src.functions.length];
+		for (int i=0;i<this.functions.length;i++) {
+			this.functions[i]=((Function) i_src.functions[i].deepCopy());
 		}
 	}
 
-	
-	
-	/**
-	 * Optimizerをココで保持する
-	 */
-	private Optimizer[] optimizers;
 
 	/**
 	 * コンストラクタ
@@ -43,13 +35,15 @@ public class FunctionStack extends Function {
 	public FunctionStack(Function... i_functions) {
 		super("FunctionStack");
 		// 入力された関数を振り分ける
-		for (Function function : i_functions) {
-			// 全関数リストへ追加
-			this.functions.add(function);
-
-			// パラメーターを保持
-			this.parameters.addAll(function.parameters);
+		this.functions=i_functions;
+		
+		List<OptimizeParameter> l=new ArrayList<OptimizeParameter>();
+		for (int i=0;i<this.parameters.length;i++) {
+			for(int j=0;j<this.functions[i].parameters.length;j++){
+				l.add(i_functions[i].parameters[j]);
+			}
 		}
+		this.parameters=l.toArray(new OptimizeParameter[0]);
 	}
 
 
@@ -80,8 +74,8 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray[] forward(NdArray[] i_input) {
-		for (int i = 0; i < this.functions.size(); i++) {
-			i_input = this.functions.get(i).forward(i_input);
+		for (int i = 0; i < this.functions.length; i++) {
+			i_input = this.functions[i].forward(i_input);
 		}
 
 		return i_input;
@@ -95,9 +89,9 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray[] backward(NdArray[] i_backwardResult) {
-		for (int i = this.functions.size() - 1; i >= 0; i--) {
+		for (int i = this.functions.length - 1; i >= 0; i--) {
 			// ここちょっとキモイ
-			i_backwardResult = this.functions.get(i).backward(i_backwardResult);
+			i_backwardResult = this.functions[i].backward(i_backwardResult);
 		}
 
 		return i_backwardResult;
@@ -111,8 +105,8 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray forward(NdArray i_input) {
-		for (int i = 0; i < this.functions.size(); i++) {
-			i_input = this.functions.get(i).forward(i_input);
+		for (int i = 0; i < this.functions.length; i++) {
+			i_input = this.functions[i].forward(i_input);
 		}
 
 		return i_input;
@@ -123,38 +117,31 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray backward(NdArray backwardResult) {
-		for (int i = this.functions.size() - 1; i >= 0; i--) {
-			backwardResult = this.functions.get(i).backward(backwardResult);
+		for (int i = this.functions.length - 1; i >= 0; i--) {
+			backwardResult = this.functions[i].backward(backwardResult);
 		}
 
 		return backwardResult;
 	}
 
-	// Optimizerを設定
-	public void SetOptimizer(Optimizer... i_optimizers) {
-		this.optimizers = i_optimizers;
-		for (Optimizer optimizer : i_optimizers) {
-			optimizer.SetParameters(this.parameters);
-		}
-	}
+
 
 	/**
 	 * 重みの更新処理
 	 */
-	public void Update() {
+	public void Update(Optimizer[] i_optimizers)
+	{
 		// 更新実行前に訓練カウントを使って各Functionの傾きを補正
-		for (int i = 0; i < this.functions.size(); i++) {
-			for (int j = 0; j < this.functions.get(i).parameters.size(); j++) {
-				for (int k = 0; k < this.functions.get(i).parameters.get(j)
-						.length(); k++) {
-					this.functions.get(i).parameters.get(j).grad.data[k] /= this.functions
-							.get(i).parameters.get(j).trainCount;
+		for (int i = 0; i < this.functions.length; i++) {
+			for (int j = 0; j < this.functions[i].parameters.length; j++) {
+				for (int k = 0; k < this.functions[i].parameters[j].length(); k++) {
+					this.functions[i].parameters[j].grad.data[k] /= this.functions[i].parameters[j].trainCount;
 				}
 			}
 		}
 
 		// Optimizerの更新を実行
-		for (Optimizer optimizer : this.optimizers) {
+		for (Optimizer optimizer : i_optimizers) {
 			optimizer.update();
 		}
 
@@ -169,9 +156,9 @@ public class FunctionStack extends Function {
 	 * 傾きの初期化
 	 */
 	public void ClearGrads() {
-		for (int i = 0; i < this.functions.size(); i++) {
-			for (int j = 0; j < this.functions.get(i).parameters.size(); j++) {
-				this.functions.get(i).parameters.get(j).clearGrad();
+		for (int i = 0; i < this.functions.length; i++) {
+			for (int j = 0; j < this.functions[i].parameters.length; j++) {
+				this.functions[i].parameters[j].clearGrad();
 			}
 		}
 	}
@@ -181,8 +168,8 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public void resetState() {
-		for (int i = 0; i < this.functions.size(); i++) {
-			this.functions.get(i).resetState();
+		for (int i = 0; i < this.functions.length; i++) {
+			this.functions[i].resetState();
 		}
 	}
 
@@ -194,8 +181,8 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray[] predict(NdArray[] forwardResult) {
-		for (int i = 0; i < this.functions.size(); i++) {
-			forwardResult = this.functions.get(i).predict(forwardResult);
+		for (int i = 0; i < this.functions.length; i++) {
+			forwardResult = this.functions[i].predict(forwardResult);
 		}
 
 		return forwardResult;
@@ -206,8 +193,8 @@ public class FunctionStack extends Function {
 	 */
 	@Override
 	public NdArray predict(NdArray input) {
-		for (int i = 0; i < this.functions.size(); i++) {
-			input = this.functions.get(i).predict(input);
+		for (int i = 0; i < this.functions.length; i++) {
+			input = this.functions[i].predict(input);
 		}
 
 		return input;

@@ -45,13 +45,11 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 //            return function.Backward(NdArray.FromArray(input));
 //        }
 
-        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction)
-        {
-        	return train(i_functionStack,i_input,i_teach,i_lossFunction,true);
-        }
+
+
 
         //バッチで学習処理を行う
-        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction, boolean isUpdate)
+        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction,Optimizer[] i_optimizers)
         {
 
             //Forwardのバッチを実行
@@ -60,19 +58,16 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
             //Backwardのバッチを実行
             i_functionStack.backward(lossResult.data);
 
-            if (isUpdate)
+            if (i_optimizers.length>0)
             {
-                i_functionStack.Update();
+                i_functionStack.Update(i_optimizers);
             }
 
             return lossResult.loss;
         }
-        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunctions i_lossFunction)
-        {
-        	return train(i_functionStack,i_input, i_teach,  i_lossFunction,true);
-        }
 
-        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunctions i_lossFunction, boolean i_isUpdate)
+
+        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunctions i_lossFunction, boolean i_isUpdate,Optimizer[] i_optimizers)
         {
             //Forwardのバッチを実行
             Results lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
@@ -82,7 +77,7 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
             if (i_isUpdate)
             {
-                i_functionStack.Update();
+                i_functionStack.Update(i_optimizers);
             }
 
             return lossResult.loss;

@@ -36,7 +36,7 @@ namespace KelpNetTester.Tests
             );
 
             //optimizerを宣言
-            model.SetOptimizer(new Adam());
+            Adam adam = new Adam(model.Parameters);
 
             //訓練ループ
             Console.WriteLine("Training...");
@@ -46,10 +46,9 @@ namespace KelpNetTester.Tests
 
                 double loss = ComputeLoss(model, sequences);
 
-                model.Update();
+                model.Update(adam);
 
                 model.ResetState();
-                model.ClearGrads();
 
                 if (epoch != 0 && epoch % DISPLAY_EPOCH == 0)
                 {

@@ -1,8 +1,5 @@
 ﻿package jp.nyatla.kelpjava;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jp.nyatla.kelpjava.common.IDuplicatable;
 import jp.nyatla.kelpjava.common.Mother;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -13,7 +10,7 @@ import jp.nyatla.kelpjava.common.NdArray;
 public abstract class Function implements IDuplicatable
 {
 	final public String name;
-	final public List<OptimizeParameter> parameters = new ArrayList<OptimizeParameter>();
+	public OptimizeParameter[] parameters;// = new ArrayList<OptimizeParameter>();
 	final protected int outputCount;
 	final protected int inputCount;
 	/**
@@ -23,14 +20,16 @@ public abstract class Function implements IDuplicatable
 	protected Function(Function i_src)
 	{
 		this.name=i_src.name;
-		for(OptimizeParameter i:i_src.parameters){
-			this.parameters.add((OptimizeParameter) i.deepCopy());
+		this.parameters=new OptimizeParameter[i_src.parameters.length];
+		for(int i=0;i<this.parameters.length;i++){
+			this.parameters[i]=((OptimizeParameter)i_src.parameters[i].deepCopy());
 		}
 		this.outputCount=i_src.outputCount;
 		this.inputCount=i_src.inputCount;
 	}
 	
-	protected Function(String i_name) {
+	protected Function(String i_name)
+	{
 		this(i_name, 0, 0);
 	}
 	/**
@@ -39,10 +38,12 @@ public abstract class Function implements IDuplicatable
 	 * @param i_inputCount
 	 * @param i_oututCount
 	 */
-	protected Function(String i_name, int i_inputCount, int i_oututCount) {
+	protected Function(String i_name, int i_inputCount, int i_oututCount)
+	{
 		this.name = i_name;
 		this.inputCount = i_inputCount;
 		this.outputCount = i_oututCount;
+		this.parameters=null;
 	}
 
 
@@ -63,8 +64,8 @@ public abstract class Function implements IDuplicatable
 	public NdArray[] backward(NdArray[] i_gy)
 	{
 		// バッチは内部で割引を行うためgy.Lengthでの加算の必要がない
-		for (int i = 0; i < this.parameters.size(); i++) {
-			this.parameters.get(i).trainCount++;
+		for (int i = 0; i < this.parameters.length; i++) {
+			this.parameters[i].trainCount++;
 		}
 		return this.backwardSingle(i_gy);
 	}
@@ -88,8 +89,8 @@ public abstract class Function implements IDuplicatable
 	}
 
 	public NdArray backward(NdArray i_gy) {
-		for (int i = 0; i < this.parameters.size(); i++) {
-			this.parameters.get(i).trainCount++;
+		for (int i = 0; i < this.parameters.length; i++) {
+			this.parameters[i].trainCount++;
 		}
 		return this.backwardSingle(i_gy);
 	}
