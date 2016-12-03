@@ -19,7 +19,7 @@ final public class MeanSquaredError extends SingleLossFunction {
 		}
 
 		o_loss.loss = loss / diff.length;
-		o_loss.data = new NdArray(diff, i_teachSignal.shape);
+		o_loss.data = new NdArray(diff, i_teachSignal.shape.clone(),false);
 		return o_loss;
 	}
 }

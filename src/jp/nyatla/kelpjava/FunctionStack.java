@@ -9,7 +9,12 @@ import jp.nyatla.kelpjava.common.NdArray;
  * 層を積み上げるこのライブラリのメインとなるクラス。 一回のForward、Backward、Updateで同時に実行される関数の集まり
  * [Serializable]
  */
-public class FunctionStack extends Function {
+public class FunctionStack extends Function
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6057295643979851503L;
 	/**
 	 * すべての層がココにFunctionクラスとして保管される
 	 */
@@ -38,8 +43,8 @@ public class FunctionStack extends Function {
 		this.functions=i_functions;
 		
 		List<OptimizeParameter> l=new ArrayList<OptimizeParameter>();
-		for (int i=0;i<this.parameters.length;i++) {
-			for(int j=0;j<this.functions[i].parameters.length;j++){
+		for (int i=0;i<i_functions.length;i++) {
+			for(int j=0;j<i_functions[i].parameters.length;j++){
 				l.add(i_functions[i].parameters[j]);
 			}
 		}

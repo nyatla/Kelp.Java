@@ -1,12 +1,14 @@
 ﻿package jp.nyatla.kelpjava.functions.activations;
 
+import jp.nyatla.kelpjava.OptimizeParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
 	//[Serializable]
     final public class Sigmoid extends NeedPreviousOutputFunction
     {
-    	/**
+		private static final long serialVersionUID = -3943737017157421431L;
+		/**
     	 * コピーコンストラクタ
     	 * @param i_src
     	 */
@@ -22,6 +24,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
         public Sigmoid(String i_name)
         {
         	super(i_name);
+        	this.parameters=new OptimizeParameter[0];
         }
 
 
@@ -35,7 +38,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
                 y[i] = 1 / (1 + Math.exp(-i_x.data[i]));
             }
 
-            return new NdArray(y, i_x.shape);
+            return new NdArray(y, i_x.shape.clone(),false);
         }
 
         @Override
@@ -48,7 +51,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
                 gx[i] = gy.data[i] * prevOutput.data[i] * (1 - prevOutput.data[i]);
             }
 
-            return new NdArray(gx, gy.shape);
+            return new NdArray(gx, gy.shape.clone(),false);
         }
 		@Override
 		public Object deepCopy() {

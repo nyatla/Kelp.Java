@@ -12,6 +12,7 @@ import jp.nyatla.kelpjava.common.NdArray;
  */
 
 public abstract class NeedPreviousOutputFunction extends Function {
+	private static final long serialVersionUID = -6858602587546219651L;
 	// 後入れ先出しリスト
 	final private List<NdArray[]> _prevOutput = new ArrayList<NdArray[]>();
 

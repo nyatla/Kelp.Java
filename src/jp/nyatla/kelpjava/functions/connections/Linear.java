@@ -7,7 +7,8 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
 //    [Serializable]
     final public class Linear extends NeedPreviousInputFunction
     {
-        public final NdArray W;
+		private static final long serialVersionUID = 5124105736160517816L;
+		public final NdArray W;
         public final NdArray b;
         public final NdArray gW;
         public final NdArray gb;
@@ -99,7 +100,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
                 this.gb.data[i] += gyData;
             }
 
-            return new NdArray(gxData, i_prevInput.shape);
+            return new NdArray(gxData, i_prevInput.shape.clone(),false);
         }
 		@Override
 		public Object deepCopy() {

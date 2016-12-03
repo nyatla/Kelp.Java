@@ -19,7 +19,7 @@ public class SoftmaxCrossEntropy extends SingleLossFunction {
 
 		gx[maxIndex] -= 1;
 		o_loss.loss = loss;
-		o_loss.data = new NdArray(gx, i_input.shape);
+		o_loss.data = new NdArray(gx, i_input.shape.clone(),false);
 		return o_loss;
 	}
 

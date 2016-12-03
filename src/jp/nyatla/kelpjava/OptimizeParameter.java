@@ -1,10 +1,13 @@
 ﻿package jp.nyatla.kelpjava;
 
+import java.io.Serializable;
+
 import jp.nyatla.kelpjava.common.IDuplicatable;
 import jp.nyatla.kelpjava.common.NdArray;
 
-final public class OptimizeParameter implements IDuplicatable
+final public class OptimizeParameter implements IDuplicatable,Serializable
 {
+	private static final long serialVersionUID = 7870851322738478448L;
 	final public String name;
 	final public NdArray param;
 	final public NdArray grad;
@@ -19,9 +22,9 @@ final public class OptimizeParameter implements IDuplicatable
 		this.param=(NdArray) i_src.param.deepCopy();
 		this.trainCount=i_src.trainCount;
 	}
-	
 	/** Updateを行わずに実行されたBackwardの回数をカウントし、バッチ更新時に使用する*/
 	public int trainCount;
+	
 
 	public int length()
 	{

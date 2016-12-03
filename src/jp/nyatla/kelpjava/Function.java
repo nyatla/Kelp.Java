@@ -1,5 +1,7 @@
 ﻿package jp.nyatla.kelpjava;
 
+import java.io.Serializable;
+
 import jp.nyatla.kelpjava.common.IDuplicatable;
 import jp.nyatla.kelpjava.common.Mother;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -7,12 +9,13 @@ import jp.nyatla.kelpjava.common.NdArray;
 /**
  * FunctionStackに積み上げるFunctionの基底クラス [Serializable]
  */
-public abstract class Function implements IDuplicatable
+public abstract class Function implements IDuplicatable,Serializable
 {
+	private static final long serialVersionUID = 1622805076763179719L;
 	final public String name;
-	public OptimizeParameter[] parameters;// = new ArrayList<OptimizeParameter>();
 	final protected int outputCount;
 	final protected int inputCount;
+	public OptimizeParameter[] parameters;// = new ArrayList<OptimizeParameter>();
 	/**
 	 * コピーコンストラクタ
 	 * @param i_src

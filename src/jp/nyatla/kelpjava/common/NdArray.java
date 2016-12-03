@@ -1,5 +1,6 @@
 ﻿package jp.nyatla.kelpjava.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,9 @@ import java.util.List;
  * NumpyのNdArrayを模したクラス N次元のArrayクラスを入力に取り、内部的には1次元配列として保持する事で動作を模倣している
  * 
  */
-final public class NdArray implements IDuplicatable {
+final public class NdArray implements IDuplicatable,Serializable
+{
+	private static final long serialVersionUID = 761252827151343560L;
 	final public double[] data;
 	final public int[] shape;
 	/**
@@ -20,11 +23,50 @@ final public class NdArray implements IDuplicatable {
 		this.shape = i_src.shape.clone();
 	}
 	
-	public NdArray(double[] i_data, int[] i_shape) {
+	public NdArray(double[] i_data, int[] i_shape,boolean i_is_clone) {
 		// 配列は複製して保持します。
-		this.data = i_data.clone();
-		this.shape = i_shape.clone();
+		if(i_is_clone){
+			this.data = i_data.clone();
+			this.shape = i_shape.clone();
+		}else{
+			this.data = i_data;
+			this.shape = i_shape;
+		}
 	}
+	/**
+	 * Rank1の配列からインスタンスを生成します。
+	 * @param i_data
+	 */
+	public NdArray(double[] i_data,boolean i_is_clone)
+	{
+		if(i_is_clone){
+			this.data=i_data.clone();
+		}else{
+			this.data=i_data;
+		}
+		this.shape=new int[]{i_data.length};
+	}
+	/**
+	 * Rank2の配列からインスタンスを生成します。
+	 * @param i_data
+	 */
+	public NdArray(double[][] i_data)
+	{
+		int size=i_data[0].length;
+		for(int i=1;i<i_data.length;i++){
+			if(i_data[i].length!=size){
+				throw new IllegalArgumentException();
+			}
+		}
+		this.data=new double[size*i_data.length];
+		for(int i=0;i<i_data.length;i++){
+			for(int j=0;j<size;j++){
+				this.data[i*size+j]=i_data[i][j];
+			}
+		}
+		this.shape=new int[]{i_data.length,size};
+	}
+	
 	public int length() {
 		return this.data.length;
 	}
@@ -45,7 +87,7 @@ final public class NdArray implements IDuplicatable {
 	// }
 
 	public static NdArray zerosLike(NdArray baseArray) {
-		return new NdArray(new double[baseArray.length()], baseArray.shape);
+		return new NdArray(new double[baseArray.length()], baseArray.shape.clone(),false);
 	}
 
 	public static NdArray onesLike(NdArray baseArray) {
@@ -54,11 +96,11 @@ final public class NdArray implements IDuplicatable {
 		for (int i = 0; i < resutlArray.length; i++) {
 			resutlArray[i] = 1;
 		}
-		return new NdArray(resutlArray, baseArray.shape);
+		return new NdArray(resutlArray, baseArray.shape.clone(),false);
 	}
 
 	public static NdArray zeros(int... i_shape) {
-		return new NdArray(new double[shapeToArrayLength(i_shape)], i_shape);
+		return new NdArray(new double[shapeToArrayLength(i_shape)], i_shape,false);
 	}
 
 	//
@@ -97,7 +139,7 @@ final public class NdArray implements IDuplicatable {
 		// 1次元の配列に制限
 		System.arraycopy(i_data, 0, resultData, 0, resultData.length);
 		resultShape = new int[] { i_data.length };
-		return new NdArray(resultData, resultShape);
+		return new NdArray(resultData, resultShape,false);
 	}
 
 	//
@@ -196,7 +238,7 @@ final public class NdArray implements IDuplicatable {
 		boolean isExponential = false; // 指数表現にするか
 
 		for (int i = 0; i < this.data.length; i++) {
-			String[] divStr = Double.toString(this.data[i]).split(".");
+			String[] divStr = Double.toString(this.data[i]).split("\\.");
 			intMaxLength = Math.max(intMaxLength, divStr[0].length());
 			if (divStr.length > 1 && !isExponential) {
 				isExponential = divStr[1].contains("E");
@@ -230,9 +272,9 @@ final public class NdArray implements IDuplicatable {
 			if (isExponential) {
 				// 代替手法がよくわからない。
 				// divStr = this.Data[i].ToString("0.00000000e+00").Split('.');
-				divStr = Double.toString(this.data[i]).split(".");
+				divStr = Double.toString(this.data[i]).split("\\.");
 			} else {
-				divStr = Double.toString(this.data[i]).split(".");
+				divStr = Double.toString(this.data[i]).split("\\.");
 			}
 
 			// 最大文字数でインデントを揃える
