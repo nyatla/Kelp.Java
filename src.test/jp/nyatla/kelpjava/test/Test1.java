@@ -1,6 +1,7 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
+import jp.nyatla.kelpjava.IOptimizer;
 import jp.nyatla.kelpjava.functions.activations.Sigmoid;
 import jp.nyatla.kelpjava.functions.connections.Linear;
 import jp.nyatla.kelpjava.optimizers.MomentumSGD;
@@ -40,7 +41,7 @@ import jp.nyatla.kelpjava.optimizers.MomentumSGD;
             );
 
             //optimizerを宣言
-            MomentumSGD momentumSGD = new MomentumSGD(nn.Parameters);
+            IOptimizer[] momentumSGD = nn.InitOptimizers(new MomentumSGD());
 
             //訓練ループ
             System.out.println("Training...");

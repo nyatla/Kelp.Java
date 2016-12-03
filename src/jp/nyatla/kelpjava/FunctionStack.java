@@ -45,7 +45,19 @@ public class FunctionStack extends Function {
 		}
 		this.parameters=l.toArray(new OptimizeParameter[0]);
 	}
+    //入力されたテンプレートから各パラメータに対応した長さで初期化をする
+    public IOptimizer[] InitOptimizers(IOptimizer template)
+    {
+        IOptimizer[] result = new IOptimizer[this.parameters.length];
 
+        for (int i = 0; i < result.length; i++)
+        {
+            result[i] = template.initialise(this.parameters[i]);
+        }
+
+        return result;
+    } 
+	
 
 	/**
 	 * Functionとして呼び出された時にバトンを渡す
@@ -124,38 +136,43 @@ public class FunctionStack extends Function {
 		return backwardResult;
 	}
 
+    //訓練カウントを使って各Functionの傾きを補正
+    public void reduce()
+    {
+        for (OptimizeParameter parameter:this.parameters)
+        {
+            for (int j = 0; j < parameter.length(); j++)
+            {
+                parameter.grad.data[j] /= parameter.trainCount;
+            }
+        }
+    }
 
+    //重みの更新処理
+    public void Update(IOptimizer[][] optimizers)
+    {
+        //更新実行前に訓練カウントを使って各Functionの傾きを補正
+        this.reduce();
 
-	/**
-	 * 重みの更新処理
-	 */
-	public void Update(Optimizer[] i_optimizers)
-	{
-		// 更新実行前に訓練カウントを使って各Functionの傾きを補正
-		for (int i = 0; i < this.functions.length; i++) {
-			for (int j = 0; j < this.functions[i].parameters.length; j++) {
-				for (int k = 0; k < this.functions[i].parameters[j].length(); k++) {
-					this.functions[i].parameters[j].grad.data[k] /= this.functions[i].parameters[j].trainCount;
-				}
-			}
-		}
+        //Optimizerの更新を実行
+        for(IOptimizer[] optimizer : optimizers)
+        {
+            for(int i=0;i< this.parameters.length;i++)
+            {
+                optimizer[i].update(this.parameters[i]);
+            }
+        }
 
-		// Optimizerの更新を実行
-		for (Optimizer optimizer : i_optimizers) {
-			optimizer.update();
-		}
-
-		// 傾きとカウンタをリセット
-		this.ClearGrads();
-
-		// ガベージコレクタを明示的に起動
-		Runtime.getRuntime().gc();
-	}
+        //傾きとカウンタをリセット
+        this.clearGrads();
+    }    
+    
+    
 
 	/**
 	 * 傾きの初期化
 	 */
-	public void ClearGrads() {
+	public void clearGrads() {
 		for (int i = 0; i < this.functions.length; i++) {
 			for (int j = 0; j < this.functions[i].parameters.length; j++) {
 				this.functions[i].parameters[j].clearGrad();
