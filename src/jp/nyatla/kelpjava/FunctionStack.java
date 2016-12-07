@@ -154,7 +154,7 @@ public class FunctionStack extends Function
     }
 
     //重みの更新処理
-    public void Update(IOptimizer[][] optimizers)
+    public void update(IOptimizer[][] optimizers)
     {
         //更新実行前に訓練カウントを使って各Functionの傾きを補正
         this.reduce();
@@ -171,7 +171,20 @@ public class FunctionStack extends Function
         //傾きとカウンタをリセット
         this.clearGrads();
     }    
-    
+    //重みの更新処理
+    public void update(IOptimizer[] optimizer)
+    {
+        //更新実行前に訓練カウントを使って各Functionの傾きを補正
+        this.reduce();
+
+        //Optimizerの更新を実行
+        for(int i=0;i< this.parameters.length;i++)
+        {
+            optimizer[i].update(this.parameters[i]);
+        }
+        //傾きとカウンタをリセット
+        this.clearGrads();
+    }     
     
 
 	/**

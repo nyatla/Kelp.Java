@@ -46,6 +46,16 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 //        }
 
 
+        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction)
+        {
+            //Forwardのバッチを実行
+            Result lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
+
+            //Backwardのバッチを実行
+            i_functionStack.backward(lossResult.data);
+
+            return lossResult.loss;        	
+        }
 
 
         //バッチで学習処理を行う
@@ -60,7 +70,7 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
             if (i_optimizers.length>0)
             {
-                i_functionStack.Update(i_optimizers);
+                i_functionStack.update(i_optimizers);
             }
 
             return lossResult.loss;
@@ -77,7 +87,7 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
             if (i_isUpdate)
             {
-                i_functionStack.Update(i_optimizers);
+                i_functionStack.update(i_optimizers);
             }
 
             return lossResult.loss;

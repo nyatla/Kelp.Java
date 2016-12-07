@@ -1,10 +1,7 @@
 ﻿package jp.nyatla.kelpjava.test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
 
 import jp.nyatla.kelpjava.FunctionStack;
 import jp.nyatla.kelpjava.IOptimizer;
@@ -18,21 +15,23 @@ import jp.nyatla.kelpjava.optimizers.MomentumSGD;
 
 //MLPによるXORの学習
 class Test1 {
+
 	public static void main(String[] i_args) {
 		// 訓練回数
 		final int learningCount = 10000;
 
 		// 訓練データ
-		NdArray[] trainData = { new NdArray(new double[] { 0.0, 0.0 }, false),
-				new NdArray(new double[] { 1.0, 0.0 }, false),
-				new NdArray(new double[] { 0.0, 1.0 }, false),
-				new NdArray(new double[] { 1.0, 1.0 }, false), };
+		NdArray[] trainData =JavaUtils.createNdArray(new double[][]{
+			{0,0},
+			{1,0},
+			{0,1},
+			{1,1},
+		});
 
 		// 訓練データラベル
-		NdArray[] trainLabel = { new NdArray(new double[] { 0.0 }, false),
-				new NdArray(new double[] { 1.0 }, false),
-				new NdArray(new double[] { 1.0 }, false),
-				new NdArray(new double[] { 0.0 }, false) };
+		NdArray[] trainLabel = JavaUtils.createNdArray(new double[][]{
+				{ 0.0 },{ 1.0 },{ 1.0 },{ 0.0 }});
+		
 
 		// ネットワークの構成は FunctionStack に書き連ねる
 		FunctionStack nn = new FunctionStack(
@@ -62,17 +61,20 @@ class Test1 {
 			System.out.println(input.data[0] + " xor " + input.data[1] + " = " + resultIndex + " " + result);
 		}
         //保存
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("test1.nn"))) {
-            oos.writeObject(nn);
-        } catch (IOException e) {
-        	e.printStackTrace();
-        }
+		try {
+			JavaUtils.writeToFile(nn,"test1.nn");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
         FunctionStack nn2=null;
-        try (ObjectInputStream oos = new ObjectInputStream(new FileInputStream("test1.nn"))) {
-            nn2=(FunctionStack) oos.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-        	e.printStackTrace();
-        }
+        
+        try {
+			nn2=JavaUtils.readFromFile("test1.nn");
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		System.out.println("Test2 Start...");
 		for (NdArray input : trainData) {
 			NdArray result = trainer.predict(nn2, input);

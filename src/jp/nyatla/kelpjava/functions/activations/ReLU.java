@@ -4,24 +4,28 @@ import jp.nyatla.kelpjava.OptimizeParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
-//[Serializable]
-final public class Sigmoid extends NeedPreviousOutputFunction {
-	private static final long serialVersionUID = -3943737017157421431L;
+/**
+ * [Serializable]
+ */
+public class ReLU extends NeedPreviousOutputFunction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4242585829660176536L;
 
 	/**
 	 * コピーコンストラクタ
-	 * 
 	 * @param i_src
 	 */
-	public Sigmoid(Sigmoid i_src) {
+	public ReLU(ReLU i_src) {
 		super(i_src);
 	}
 
-	public Sigmoid() {
-		this("Sigmoid");
+	public ReLU() {
+		this("ReLU");
 	}
 
-	public Sigmoid(String i_name) {
+	public ReLU(String i_name) {
 		super(i_name);
 		this.parameters = new OptimizeParameter[0];
 	}
@@ -31,25 +35,25 @@ final public class Sigmoid extends NeedPreviousOutputFunction {
 		double[] y = new double[i_x.length()];
 
 		for (int i = 0; i < i_x.length(); i++) {
-			y[i] = 1 / (1 + Math.exp(-i_x.data[i]));
+			y[i] = Math.max(0, i_x.data[i]);
 		}
 
 		return new NdArray(y, i_x.shape.clone(), false);
 	}
 
 	@Override
-	protected NdArray needPreviousBackward(NdArray gy, NdArray prevOutput) {
-		double[] gx = new double[gy.length()];
+	protected NdArray needPreviousBackward(NdArray i_gy, NdArray i_prevOutput) {
+		double[] gx = new double[i_gy.length()];
 
-		for (int i = 0; i < gy.length(); i++) {
-			gx[i] = gy.data[i] * prevOutput.data[i] * (1 - prevOutput.data[i]);
+		for (int i = 0; i < i_gy.length(); i++) {
+			gx[i] = i_prevOutput.data[i] > 0 ? i_gy.data[i] : 0;
 		}
 
-		return new NdArray(gx, gy.shape.clone(), false);
+		return new NdArray(gx, i_gy.shape.clone(), false);
 	}
 
 	@Override
 	public Object deepCopy() {
-		return new Sigmoid(this);
+		return new ReLU(this);
 	}
 }

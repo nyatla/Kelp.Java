@@ -7,7 +7,8 @@ import jp.nyatla.kelpjava.OptimizeParameter;
  * [Serializable]
  * 
  */
-final public class MomentumSGD implements IOptimizer {
+final public class MomentumSGD implements IOptimizer
+{
 	final private double LearningRate;
 	final private double momentum;
 	final private double[] v;
