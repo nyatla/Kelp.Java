@@ -13,8 +13,11 @@ import jp.nyatla.kelpjava.functions.connections.Linear;
 import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
 import jp.nyatla.kelpjava.optimizers.MomentumSGD;
 
-//MLPによるXORの学習
-class Test1 {
+/**
+ * MLPによるXORの学習
+ *
+ */
+public class Test1 {
 
 	public static void main(String[] i_args) {
 		// 訓練回数

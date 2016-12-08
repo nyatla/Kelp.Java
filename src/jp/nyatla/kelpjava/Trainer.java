@@ -4,6 +4,7 @@ import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.loss.LossFunctions;
 import jp.nyatla.kelpjava.loss.LossFunctions.Results;
+import jp.nyatla.kelpjava.loss.MeanSquaredError;
 import jp.nyatla.kelpjava.loss.SingleLossFunction;
 import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
@@ -45,16 +46,21 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 //            return function.Backward(NdArray.FromArray(input));
 //        }
 
-
-        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction)
-        {
+		public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach,MeanSquaredError i_lossfunction, IOptimizer[] i_optimizers) {
             //Forwardのバッチを実行
-            Result lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
+            Result lossResult = i_lossfunction.evaluate(i_functionStack.forward(i_input),i_teach);
 
             //Backwardのバッチを実行
             i_functionStack.backward(lossResult.data);
-
-            return lossResult.loss;        	
+            if (i_optimizers!=null && i_optimizers.length>0)
+            {
+                i_functionStack.update(i_optimizers);
+            }
+            return lossResult.loss;
+		}
+        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction)
+        {
+        	return this.train(i_functionStack,i_input,i_teach,i_lossFunction,null);
         }
 
 
@@ -67,12 +73,10 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
             //Backwardのバッチを実行
             i_functionStack.backward(lossResult.data);
-
-            if (i_optimizers.length>0)
+            if (i_optimizers!=null && i_optimizers.length>0)
             {
                 i_functionStack.update(i_optimizers);
             }
-
             return lossResult.loss;
         }
 
@@ -130,6 +134,9 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
         {
             return functionStack.predict(i_input);
         }
+
+
+
 
     }
 

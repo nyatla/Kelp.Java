@@ -4,7 +4,11 @@ import jp.nyatla.kelpjava.OptimizeParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
-//[Serializable]
+/**
+ * シグモイド関数
+ * [Serializable]
+ *
+ */
 final public class Sigmoid extends NeedPreviousOutputFunction {
 	private static final long serialVersionUID = -3943737017157421431L;
 

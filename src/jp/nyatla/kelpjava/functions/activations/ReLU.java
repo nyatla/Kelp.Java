@@ -5,6 +5,7 @@ import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
 /**
+ * ランプ関数
  * [Serializable]
  */
 public class ReLU extends NeedPreviousOutputFunction {

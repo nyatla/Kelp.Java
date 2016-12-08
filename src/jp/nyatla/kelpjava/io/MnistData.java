@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using KelpNet.Common;
-using MNISTLoader;
+﻿package jp.nyatla.kelpjava.io;
 
-namespace KelpNetTester
-{
-    class MnistData
+public class MnistData
     {
-        readonly MnistDataLoader mnistDataLoader = new MnistDataLoader();
 
-        private double[][,,] X;
+        private double[][][][] X;
         private int[][] Tx;
 
-        private double[][,,] Y;
+        private double[][][][] Y;
         private int[][] Ty;
 
-        public MnistData()
+        public MnistData(MnistLabelFile i_trainlabel,MnistImageFile i_traindata)
         {
             //トレーニングデータ
             this.X = new double[this.mnistDataLoader.TrainData.Length][,,];
@@ -76,15 +69,5 @@ namespace KelpNetTester
         }
     }
 
-    public class MnistDataSet
-    {
-        public Array[] Data;
-        public int[][] Label;
 
-        public MnistDataSet(Array[] data, int[][] label)
-        {
-            this.Data = data;
-            this.Label = label;
-        }
-    }
-}
+
