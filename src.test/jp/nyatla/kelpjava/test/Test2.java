@@ -1,7 +1,7 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.IOptimizer;
+import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -28,11 +28,13 @@ public class Test2 {
 				{ 0.0 }, { 1.0 }, { 1.0 }, { 0.0 } });
 
 		// ネットワークの構成を FunctionStack に書き連ねる
-		FunctionStack nn = new FunctionStack(new Linear(2, 2, "l1 Linear"),
-				new ReLU("l1 ReLU"), new Linear(2, 1, "l2 Linear"));
+		FunctionStack nn = new FunctionStack(
+			new Linear(2, 2, "l1 Linear"),
+			new ReLU("l1 ReLU"),
+			new Linear(2, 1, "l2 Linear"));
 
 		// optimizerを宣言(今回はAdam)
-		IOptimizer[] adam = nn.InitOptimizers(new Adam());
+		nn.setOptimizer(new Optimizer[]{new Adam()});
 
 		Trainer trainer = new Trainer();
 		MeanSquaredError loss_function = new MeanSquaredError();
@@ -40,13 +42,13 @@ public class Test2 {
 		System.out.println("Training...");
 		for (int i = 0; i < learningCount; i++) {
 			// TrainerはOptimeserを省略すると更新を行わない
-			trainer.train(nn, trainData[0], trainLabel[0], loss_function);
-			trainer.train(nn, trainData[1], trainLabel[1], loss_function);
-			trainer.train(nn, trainData[2], trainLabel[2], loss_function);
-			trainer.train(nn, trainData[3], trainLabel[3], loss_function);
+			trainer.train(nn, trainData[0], trainLabel[0], loss_function,false);
+			trainer.train(nn, trainData[1], trainLabel[1], loss_function,false);
+			trainer.train(nn, trainData[2], trainLabel[2], loss_function,false);
+			trainer.train(nn, trainData[3], trainLabel[3], loss_function,false);
 
 			// 訓練後に毎回更新を実行しなければ、ミニバッチとして更新できる
-			nn.update(adam);
+			nn.update();
 		}
 
 		// 訓練結果を表示

@@ -16,6 +16,7 @@ public abstract class Function implements IDuplicatable,Serializable
 	final protected int outputCount;
 	final protected int inputCount;
 	public OptimizeParameter[] parameters;// = new ArrayList<OptimizeParameter>();
+	public Optimizer[] optimizers;
 	/**
 	 * コピーコンストラクタ
 	 * @param i_src
@@ -27,6 +28,11 @@ public abstract class Function implements IDuplicatable,Serializable
 		for(int i=0;i<this.parameters.length;i++){
 			this.parameters[i]=((OptimizeParameter)i_src.parameters[i].deepCopy());
 		}
+		this.optimizers=new Optimizer[i_src.optimizers.length];
+		for(int i=0;i<this.optimizers.length;i++){
+			this.optimizers[i]=((Optimizer)i_src.optimizers[i].deepCopy());
+		}
+		
 		this.outputCount=i_src.outputCount;
 		this.inputCount=i_src.inputCount;
 	}
@@ -48,7 +54,15 @@ public abstract class Function implements IDuplicatable,Serializable
 		this.outputCount = i_oututCount;
 		this.parameters=null;
 	}
+    public void setOptimizer(Optimizer[] i_optimizers)
+    {
+        this.optimizers = i_optimizers;
 
+        for(Optimizer i:i_optimizers)
+        {
+        	i.initilise(this.parameters);
+        }
+    }
 
 	/**
 	 * 外部公開用
@@ -130,6 +144,34 @@ public abstract class Function implements IDuplicatable,Serializable
 		return this.forwardSingle(i_input);
 	}
 
+    //訓練カウントを使って各Functionの傾きを補正
+    public void reduce()
+    {
+        for(OptimizeParameter i:this.parameters)
+        {
+            i.reduce();
+        }
+    }
+
+    public void update()
+    {
+        //更新実行前に訓練カウントを使って各Functionの傾きを補正
+        for (Optimizer i :this.optimizers)
+        {
+            i.update();
+        }
+    }
+
+    public void ClearGrads()
+    {
+        for(OptimizeParameter i:this.parameters)
+        {
+            i.clearGrad();
+        }
+    }	
+	
+	
+	
 	/**
 	 * ある処理実行後に特定のデータを初期値に戻す処理
 	 */

@@ -36,7 +36,17 @@ final public class OptimizeParameter implements IDuplicatable,Serializable
 		this.grad = grad;
 		this.name = name;
 	}
+    //傾きの補正
+    public void reduce()
+    {
+        for (int j = 0; j < this.grad.length(); j++)
+        {
+            this.grad.data[j] /= this.trainCount;
+        }
 
+        //カウンタをリセット
+        this.trainCount = 0;
+    }
 
 	/**
 	 * 傾き・バッチカウントを初期化する。
@@ -44,9 +54,6 @@ final public class OptimizeParameter implements IDuplicatable,Serializable
 	public void clearGrad() {
 		// 0埋め
 		this.grad.fill(0);
-
-		// バッチカウントもリセット
-		this.trainCount = 0;
 	}
 
 	@Override

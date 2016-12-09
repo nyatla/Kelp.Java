@@ -1,54 +1,85 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.IOptimizer;
 import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.Optimizer;
+import jp.nyatla.kelpjava.OptimizerParameter;
 
 /**
  * [Serializable]
  * 
  */
-final public class MomentumSGD implements IOptimizer
-{
+final public class MomentumSGD extends Optimizer {
+	private static final long serialVersionUID = -470212701546866706L;
 	final private double LearningRate;
 	final private double momentum;
-	final private double[] v;
-
-	// public MomentumSGD(MomentumSGD i_src)
-	// {
-	// super(i_src);
-	// this.LearningRate=i_src.LearningRate;
-	// this.momentum=i_src.momentum;
-	// this.v=new double[i_src.v.length][];
-	// for(int i=0;i<this.v.length;i++){
-	// this.v[i]=i_src.v[i].clone();
-	// }
-	// }
+	/**
+	 * コピーコンストラクタ
+	 * @param i_src
+	 */
+	private MomentumSGD(MomentumSGD i_src) {
+		super(i_src);
+		this.LearningRate=i_src.LearningRate;
+		this.momentum=i_src.momentum;
+	}
 
 	public MomentumSGD() {
-		this(0.01, 0.9, 0);
+		this(0.01, 0.9);
 	}
 
-	public MomentumSGD(double i_learningRate, double i_momentum,
-			int i_parameterLength) {
+	public MomentumSGD(double i_learningRate, double i_momentum) {
 		this.LearningRate = i_learningRate;
 		this.momentum = i_momentum;
-		this.v = new double[i_parameterLength];
 	}
 
-	@Override
-	public IOptimizer initialise(OptimizeParameter parameter) {
-		return new MomentumSGD(this.LearningRate, this.momentum,
-				parameter.length());
-	}
+	public void initilise(OptimizeParameter[] i_functionParameters) {
+		this.optimizerParameters = new OptimizerParameter[i_functionParameters.length];
 
-	@Override
-	public void update(OptimizeParameter i_parameter) {
-		for (int i = 0; i < i_parameter.length(); i++) {
-
-			this.v[i] *= this.momentum;
-			this.v[i] -= this.LearningRate * i_parameter.grad.data[i];
-
-			i_parameter.param.data[i] += this.v[i];
+		for (int i = 0; i < this.optimizerParameters.length; i++) {
+			this.optimizerParameters[i] = new MomentumSGDParameter(
+					i_functionParameters[i], this);
 		}
 	}
+	@Override
+	public Optimizer deepCopy() {
+		return new MomentumSGD(this);
+	}
+	/**
+	 * [Serializable]
+	 * 
+	 */
+	private class MomentumSGDParameter extends OptimizerParameter {
+		private static final long serialVersionUID = 2286314412322217159L;
+		private MomentumSGD optimiser;
+		private double[] v;
+
+		public MomentumSGDParameter(MomentumSGDParameter i_src) {
+			super(i_src);
+			this.v = i_src.v.clone();
+			this.optimiser = (MomentumSGD) i_src.optimiser.deepCopy();
+		}
+
+		public MomentumSGDParameter(OptimizeParameter i_functionParameter,
+				MomentumSGD i_optimiser) {
+			super(i_functionParameter);
+			this.v = new double[i_functionParameter.length()];
+			this.optimiser = i_optimiser;
+		}
+
+		@Override
+		public void update() {
+			for (int i = 0; i < this.functionParameters.length(); i++) {
+				this.v[i] *= this.optimiser.momentum;
+				this.v[i] -= this.optimiser.LearningRate
+						* this.functionParameters.grad.data[i];
+
+				this.functionParameters.param.data[i] += this.v[i];
+			}
+		}
+
+		@Override
+		public Object deepCopy() {
+			return new MomentumSGDParameter(this);
+		}
+	}
+
 }

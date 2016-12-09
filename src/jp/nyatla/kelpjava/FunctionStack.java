@@ -50,18 +50,8 @@ public class FunctionStack extends Function
 		}
 		this.parameters=l.toArray(new OptimizeParameter[0]);
 	}
-    //入力されたテンプレートから各パラメータに対応した長さで初期化をする
-    public IOptimizer[] InitOptimizers(IOptimizer template)
-    {
-        IOptimizer[] result = new IOptimizer[this.parameters.length];
 
-        for (int i = 0; i < result.length; i++)
-        {
-            result[i] = template.initialise(this.parameters[i]);
-        }
 
-        return result;
-    } 
 	
 
 	/**
@@ -91,11 +81,14 @@ public class FunctionStack extends Function
 	 */
 	@Override
 	public NdArray[] forward(NdArray[] i_input) {
+        NdArray[][] inputData = new NdArray[this.functions.length + 1][];
+        inputData[0] = i_input;
+
 		for (int i = 0; i < this.functions.length; i++) {
-			i_input = this.functions[i].forward(i_input);
+			inputData[i+1] = this.functions[i].forward(inputData[i]);
 		}
 
-		return i_input;
+		return inputData[this.functions.length];
 	}
 
 	/**
@@ -122,11 +115,13 @@ public class FunctionStack extends Function
 	 */
 	@Override
 	public NdArray forward(NdArray i_input) {
+        NdArray[] inputData = new NdArray[this.functions.length + 1];
+        inputData[0] = i_input;
 		for (int i = 0; i < this.functions.length; i++) {
-			i_input = this.functions[i].forward(i_input);
+			inputData[i+1] = this.functions[i].forward(inputData[i]);
 		}
 
-		return i_input;
+		return inputData[this.functions.length];
 	}
 
 	/**
@@ -140,47 +135,18 @@ public class FunctionStack extends Function
 
 		return backwardResult;
 	}
-
-    //訓練カウントを使って各Functionの傾きを補正
-    public void reduce()
-    {
-        for (OptimizeParameter parameter:this.parameters)
-        {
-            for (int j = 0; j < parameter.length(); j++)
-            {
-                parameter.grad.data[j] /= parameter.trainCount;
-            }
-        }
-    }
-
+   
     //重みの更新処理
-    public void update(IOptimizer[][] optimizers)
+    @Override
+    public void update()
     {
         //更新実行前に訓練カウントを使って各Functionの傾きを補正
         this.reduce();
 
         //Optimizerの更新を実行
-        for(IOptimizer[] optimizer : optimizers)
+        for(int i=0;i< this.optimizers.length;i++)
         {
-            for(int i=0;i< this.parameters.length;i++)
-            {
-                optimizer[i].update(this.parameters[i]);
-            }
-        }
-
-        //傾きとカウンタをリセット
-        this.clearGrads();
-    }    
-    //重みの更新処理
-    public void update(IOptimizer[] optimizer)
-    {
-        //更新実行前に訓練カウントを使って各Functionの傾きを補正
-        this.reduce();
-
-        //Optimizerの更新を実行
-        for(int i=0;i< this.parameters.length;i++)
-        {
-            optimizer[i].update(this.parameters[i]);
+            this.optimizers[i].update();
         }
         //傾きとカウンタをリセット
         this.clearGrads();

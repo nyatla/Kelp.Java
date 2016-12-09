@@ -43,20 +43,15 @@ public abstract class NeedPreviousInputFunction extends Function
 	
 	@Override
 	protected NdArray forwardSingle(NdArray i_x) {
-		this._prevInput.add(new NdArray[] { new NdArray(i_x) });
+		this._prevInput.add(new NdArray[] {i_x});
 
 		return this.needPreviousForward(i_x);
 	}
 
 	@Override
-	protected NdArray[] forwardSingle(NdArray[] i_x) {
-		// コピーを格納
-		NdArray[] prevInput = new NdArray[i_x.length];
-		for (int i = 0; i < prevInput.length; i++) {
-			prevInput[i] = new NdArray(i_x[i]);
-		}
-
-		this._prevInput.add(prevInput);
+	protected NdArray[] forwardSingle(NdArray[] i_x)
+	{
+		this._prevInput.add(i_x);
 
 		NdArray[] prevoutput = new NdArray[i_x.length];
 

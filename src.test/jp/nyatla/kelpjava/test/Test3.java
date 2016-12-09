@@ -1,7 +1,7 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.IOptimizer;
+import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -38,7 +38,7 @@ public class Test3 {
 				new Tanh("l1 Tanh"), new Linear(4, 1, "l2 Linear"));
 
 		// optimizerの宣言
-		IOptimizer[] sgd = nn.InitOptimizers(new SGD());
+		nn.setOptimizer(new Optimizer[]{new SGD()});
 		Trainer trainer = new Trainer();
 		MeanSquaredError lossfunction = new MeanSquaredError();
 		// 訓練ループ
@@ -49,7 +49,7 @@ public class Test3 {
 			for (int j = 0; j < N; j++) {
 				// ネットワークは訓練を実行すると戻り値に誤差が返ってくる
 				loss += trainer.train(nn, trainData[j], trainLabel[j],
-						lossfunction, sgd);
+						lossfunction);
 			}
 
 			if (i % (EPOCH / 10) == 0) {

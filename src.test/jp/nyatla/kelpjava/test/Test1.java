@@ -4,7 +4,7 @@ import java.io.IOException;
 
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.IOptimizer;
+import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -43,7 +43,7 @@ public class Test1 {
 			new Linear(2, 2, "l2 Linear"));
 
 		// optimizerを宣言
-		IOptimizer[][] momentumSGD = { nn.InitOptimizers(new MomentumSGD()) };
+		nn.setOptimizer(new Optimizer[]{ new MomentumSGD() });
 
 		// 訓練ループ
 		Trainer trainer = new Trainer();
@@ -52,7 +52,7 @@ public class Test1 {
 		for (int i = 0; i < learningCount; i++) {
 			for (int j = 0; j < trainData.length; j++) {
 				// 訓練実行時にロス関数を記述
-				trainer.train(nn, trainData[j], trainLabel[j], loss_function,momentumSGD);
+				trainer.train(nn, trainData[j], trainLabel[j], loss_function);
 			}
 		}
 
