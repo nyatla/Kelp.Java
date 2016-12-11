@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.functions.activations;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
@@ -19,7 +19,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
         public Tanh(String i_name)
         {
         	super(i_name);
-    		this.parameters = new OptimizeParameter[0];        	
+    		this.parameters = new FunctionParameter[0];        	
         }    	
         public Tanh()
         {

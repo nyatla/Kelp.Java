@@ -11,15 +11,15 @@ import jp.nyatla.kelpjava.common.IDuplicatable;
  */
 public abstract class OptimizerParameter implements IDuplicatable, Serializable {
 	private static final long serialVersionUID = 3444889240336483434L;
-	protected OptimizeParameter functionParameters;
+	protected FunctionParameter functionParameters;
 	protected OptimizerParameter(OptimizerParameter i_src)
 	{
-		this.functionParameters = (OptimizeParameter) i_src.functionParameters.deepCopy();
+		this.functionParameters = (FunctionParameter) i_src.functionParameters.deepCopy();
 	}
 
-	protected OptimizerParameter(OptimizeParameter i_functionParameter) {
+	protected OptimizerParameter(FunctionParameter i_functionParameter) {
 		this.functionParameters = i_functionParameter;
 	}
 
-	public abstract void update();
+	public abstract void updateFunctionParameters();
 }

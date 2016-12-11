@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.functions.activations;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
 
@@ -27,7 +27,7 @@ final public class Sigmoid extends NeedPreviousOutputFunction {
 
 	public Sigmoid(String i_name) {
 		super(i_name);
-		this.parameters = new OptimizeParameter[0];
+		this.parameters = new FunctionParameter[0];
 	}
 
 	@Override

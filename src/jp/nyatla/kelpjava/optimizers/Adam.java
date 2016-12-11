@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.OptimizerParameter;
 
@@ -39,7 +39,7 @@ public class Adam extends Optimizer {
 		this.Epsilon = epsilon;
 	}
 
-	public void initilise(OptimizeParameter[] i_functionParameters) {
+	public void initilise(FunctionParameter[] i_functionParameters) {
 		this.optimizerParameters = new OptimizerParameter[i_functionParameters.length];
 
 		for (int i = 0; i < this.optimizerParameters.length; i++) {
@@ -66,7 +66,7 @@ public class Adam extends Optimizer {
 			this.v = i_src.v.clone();
 		}
 
-		public AdamParameter(OptimizeParameter parameter, Adam optimiser) {
+		public AdamParameter(FunctionParameter parameter, Adam optimiser) {
 			super(parameter);
 			this.m = new double[parameter.length()];
 			this.v = new double[parameter.length()];
@@ -74,7 +74,7 @@ public class Adam extends Optimizer {
 		}
 
 		@Override
-		public void update() {
+		public void updateFunctionParameters() {
 			double fix1 = 1 - Math.pow(this.optimiser.Beta1,this.optimiser.UpdateCount);
 			double fix2 = 1 - Math.pow(this.optimiser.Beta2,this.optimiser.UpdateCount);
 			double lr = this.optimiser.Alpha * Math.sqrt(fix2) / fix1;

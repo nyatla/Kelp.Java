@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.OptimizerParameter;
 
@@ -28,7 +28,7 @@ public class SGD extends Optimizer
 		this(0.1);
 	}
 	@Override
-    public void initilise(OptimizeParameter[] i_functionParameters)
+    public void initilise(FunctionParameter[] i_functionParameters)
     {
         this.optimizerParameters = new OptimizerParameter[i_functionParameters.length];
 
@@ -55,14 +55,14 @@ public class SGD extends Optimizer
 			super(i_src);
 			this.optimiser = (SGD) i_src.optimiser.deepCopy();
 		}	    
-	    public SGDParameter(OptimizeParameter i_functionParameter, SGD i_optimiser)
+	    public SGDParameter(FunctionParameter i_functionParameter, SGD i_optimiser)
 	    {
 	    	super(i_functionParameter);
 	        this.optimiser = i_optimiser;
 	    }
 	
 	    @Override
-	    public void update()
+	    public void updateFunctionParameters()
 	    {
 	        for (int i = 0; i < this.functionParameters.length(); i++)
 	        {

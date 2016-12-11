@@ -42,13 +42,13 @@ public class FunctionStack extends Function
 		// 入力された関数を振り分ける
 		this.functions=i_functions;
 		
-		List<OptimizeParameter> l=new ArrayList<OptimizeParameter>();
+		List<FunctionParameter> l=new ArrayList<FunctionParameter>();
 		for (int i=0;i<i_functions.length;i++) {
 			for(int j=0;j<i_functions[i].parameters.length;j++){
 				l.add(i_functions[i].parameters[j]);
 			}
 		}
-		this.parameters=l.toArray(new OptimizeParameter[0]);
+		this.parameters=l.toArray(new FunctionParameter[0]);
 	}
 
 

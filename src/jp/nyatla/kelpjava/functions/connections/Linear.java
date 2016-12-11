@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.functions.connections;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
 
@@ -39,7 +39,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
         	super(i_name, i_inputCount, i_outputCount);
             this.W = NdArray.zeros(i_outputCount,i_inputCount);
             this.gW = NdArray.zerosLike(this.W);
-            this.parameters = new OptimizeParameter[noBias ? 1 : 2];
+            this.parameters = new FunctionParameter[noBias ? 1 : 2];
             if (initialW == null)
             {
                 this.initWeight(this.W);
@@ -48,7 +48,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
             {
             	System.arraycopy(initialW, 0,this.W.data,0,initialW.length);
             }
-            this.parameters[0] = new OptimizeParameter(this.W, this.gW, this.name + " W");
+            this.parameters[0] = new FunctionParameter(this.W, this.gW, this.name + " W");
             //noBias=trueでもbiasを用意して更新しない
             this.b = NdArray.zeros(i_outputCount);
             this.gb = NdArray.zerosLike(this.b);
@@ -58,7 +58,7 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
                 {
                 	System.arraycopy(initialb, 0,this.b.data,0,initialb.length);
                 }
-                this.parameters[1] = new OptimizeParameter(this.b, this.gb, this.name + " b");
+                this.parameters[1] = new FunctionParameter(this.b, this.gb, this.name + " b");
             }
         }
 

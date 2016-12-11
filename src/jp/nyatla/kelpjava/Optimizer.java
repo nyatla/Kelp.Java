@@ -23,11 +23,11 @@ public abstract class Optimizer implements Serializable
 	}
 
 	
-	public abstract void initilise(OptimizeParameter[] functionParameters);
+	public abstract void initilise(FunctionParameter[] functionParameters);
 
 	public void update() {
 		for (OptimizerParameter i : this.optimizerParameters) {
-			i.update();
+			i.updateFunctionParameters();
 		}
 
 		this.updateCount++;

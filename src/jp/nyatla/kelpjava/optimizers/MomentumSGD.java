@@ -1,6 +1,6 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.OptimizeParameter;
+import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.OptimizerParameter;
 
@@ -31,7 +31,7 @@ final public class MomentumSGD extends Optimizer {
 		this.momentum = i_momentum;
 	}
 
-	public void initilise(OptimizeParameter[] i_functionParameters) {
+	public void initilise(FunctionParameter[] i_functionParameters) {
 		this.optimizerParameters = new OptimizerParameter[i_functionParameters.length];
 
 		for (int i = 0; i < this.optimizerParameters.length; i++) {
@@ -58,7 +58,7 @@ final public class MomentumSGD extends Optimizer {
 			this.optimiser = (MomentumSGD) i_src.optimiser.deepCopy();
 		}
 
-		public MomentumSGDParameter(OptimizeParameter i_functionParameter,
+		public MomentumSGDParameter(FunctionParameter i_functionParameter,
 				MomentumSGD i_optimiser) {
 			super(i_functionParameter);
 			this.v = new double[i_functionParameter.length()];
@@ -66,7 +66,7 @@ final public class MomentumSGD extends Optimizer {
 		}
 
 		@Override
-		public void update() {
+		public void updateFunctionParameters() {
 			for (int i = 0; i < this.functionParameters.length(); i++) {
 				this.v[i] *= this.optimiser.momentum;
 				this.v[i] -= this.optimiser.LearningRate

@@ -15,7 +15,7 @@ public abstract class Function implements IDuplicatable,Serializable
 	final public String name;
 	final protected int outputCount;
 	final protected int inputCount;
-	public OptimizeParameter[] parameters;// = new ArrayList<OptimizeParameter>();
+	public FunctionParameter[] parameters;// = new ArrayList<OptimizeParameter>();
 	public Optimizer[] optimizers;
 	/**
 	 * コピーコンストラクタ
@@ -24,9 +24,9 @@ public abstract class Function implements IDuplicatable,Serializable
 	protected Function(Function i_src)
 	{
 		this.name=i_src.name;
-		this.parameters=new OptimizeParameter[i_src.parameters.length];
+		this.parameters=new FunctionParameter[i_src.parameters.length];
 		for(int i=0;i<this.parameters.length;i++){
-			this.parameters[i]=((OptimizeParameter)i_src.parameters[i].deepCopy());
+			this.parameters[i]=((FunctionParameter)i_src.parameters[i].deepCopy());
 		}
 		this.optimizers=new Optimizer[i_src.optimizers.length];
 		for(int i=0;i<this.optimizers.length;i++){
@@ -147,7 +147,7 @@ public abstract class Function implements IDuplicatable,Serializable
     //訓練カウントを使って各Functionの傾きを補正
     public void reduce()
     {
-        for(OptimizeParameter i:this.parameters)
+        for(FunctionParameter i:this.parameters)
         {
             i.reduce();
         }
@@ -164,7 +164,7 @@ public abstract class Function implements IDuplicatable,Serializable
 
     public void ClearGrads()
     {
-        for(OptimizeParameter i:this.parameters)
+        for(FunctionParameter i:this.parameters)
         {
             i.clearGrad();
         }
