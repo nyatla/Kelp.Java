@@ -45,6 +45,15 @@ public class JavaUtils
 		return sum;
 	}
 	/**
+	 * 配列の値すべてを加算して、平均値を返します。
+	 * @param i_v
+	 * @return
+	 */
+	public static double average(double[] i_v) {
+		return sum(i_v)/i_v.length;
+	}
+	
+	/**
 	 * 配列から値の一致する要素のインデクスを返します。
 	 * @param i_array
 	 * @param i_v
