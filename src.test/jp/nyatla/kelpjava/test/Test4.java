@@ -64,7 +64,7 @@ import jp.nyatla.kelpjava.optimizers.MomentumSGD;
                 	DataSet datasetX=train.getRandomDataSet(20);
 
                     //バッチ学習を並列実行する
-                    double sumLoss = trainer.train(nn,datasetX.image,datasetX.label,loss);
+                    double sumLoss = trainer.batchTrain(nn,datasetX.image,datasetX.label,loss);
                     totalLoss[i-1]=sumLoss;
 
                     //20回バッチを動かしたら精度をテストする

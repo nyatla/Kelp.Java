@@ -31,10 +31,10 @@ import jp.nyatla.kelpjava.loss.LossFunction.Result;
             return lossResult.loss;
         }
 
-		public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach,LossFunction i_lossfunction) {
-			return this.train(i_functionStack, i_input,i_teach,i_lossfunction,true);
+		public double batchTrain(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach,LossFunction i_lossfunction) {
+			return this.batchTrain(i_functionStack, i_input,i_teach,i_lossfunction,true);
 		}
-        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunction i_lossFunction, boolean i_isUpdate)
+        public double batchTrain(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunction i_lossFunction, boolean i_isUpdate)
         {
             //Forwardのバッチを実行
         	LossFunction.Results lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
