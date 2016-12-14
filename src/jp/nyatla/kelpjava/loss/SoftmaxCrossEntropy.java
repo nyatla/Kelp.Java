@@ -3,7 +3,7 @@
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
 
-public class SoftmaxCrossEntropy extends SingleLossFunction {
+public class SoftmaxCrossEntropy extends LossFunction {
 
 	protected Result evaluate(NdArray i_input, NdArray i_teachSignal,Result o_loss) {
 		int maxIndex = (int) Math.max(JavaUtils.max(i_teachSignal.data), 0.0);

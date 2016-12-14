@@ -2,7 +2,7 @@
 
 import jp.nyatla.kelpjava.common.NdArray;
 
-final public class MeanSquaredError extends SingleLossFunction {
+final public class MeanSquaredError extends LossFunction {
 
 	@Override
 	protected Result evaluate(NdArray i_input, NdArray i_teachSignal,Result o_loss) {

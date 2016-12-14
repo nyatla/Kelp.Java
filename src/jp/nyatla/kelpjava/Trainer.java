@@ -2,23 +2,21 @@
 
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
-import jp.nyatla.kelpjava.loss.LossFunctions;
-import jp.nyatla.kelpjava.loss.LossFunctions.Results;
-import jp.nyatla.kelpjava.loss.SingleLossFunction;
-import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
+import jp.nyatla.kelpjava.loss.LossFunction;
+import jp.nyatla.kelpjava.loss.LossFunction.Result;
 
     //ネットワークの訓練を実行するクラス
     //主にArray->NdArrayの型変換を担う
     public class Trainer
     {
-		public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach,SingleLossFunction i_lossfunction) {
+		public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach,LossFunction i_lossfunction) {
 			return this.train(i_functionStack, i_input,i_teach,i_lossfunction,true);
 		}
 
 
 
         //バッチで学習処理を行う
-        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, SingleLossFunction i_lossFunction, boolean i_isUpdate)
+        public double train(FunctionStack i_functionStack, NdArray i_input, NdArray i_teach, LossFunction i_lossFunction, boolean i_isUpdate)
         {
 
             //Forwardのバッチを実行
@@ -33,13 +31,13 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
             return lossResult.loss;
         }
 
-		public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach,LossFunctions i_lossfunction) {
+		public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach,LossFunction i_lossfunction) {
 			return this.train(i_functionStack, i_input,i_teach,i_lossfunction,true);
 		}
-        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunctions i_lossFunction, boolean i_isUpdate)
+        public double train(FunctionStack i_functionStack, NdArray[] i_input, NdArray[] i_teach, LossFunction i_lossFunction, boolean i_isUpdate)
         {
             //Forwardのバッチを実行
-            Results lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
+        	LossFunction.Results lossResult = i_lossFunction.evaluate(i_functionStack.forward(i_input),i_teach);
 
             //Backwardのバッチを実行
             i_functionStack.backward(lossResult.data);
@@ -53,7 +51,7 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
         }
 
         //精度測定
-        public double accuracy(FunctionStack i_functionStack, NdArray[] i_x, int[][] i_y)
+        public double accuracy(FunctionStack i_functionStack, NdArray[] i_x, NdArray[] i_y)
         {
             int matchCount = 0;
 
@@ -62,7 +60,7 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
             for (int i = 0; i < i_x.length; i++)
             {
             	double max=JavaUtils.max(forwardResult[i].data);
-                if (JavaUtils.indexOf(forwardResult[i].data,max) == i_y[i][0])
+                if (JavaUtils.indexOf(forwardResult[i].data,max) == i_y[i].data[0])
                 {
                     matchCount++;
                 }
@@ -71,7 +69,12 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
             return matchCount / (double)i_x.length;
         }
 
-        //予想を実行する（外部からの使用を想定してArrayが引数
+        /**
+         * 予想を実行する（外部からの使用を想定してArrayが引数
+         * @param functionStack
+         * @param i_input
+         * @return
+         */
         public NdArray[] predict(FunctionStack functionStack, NdArray[] i_input)
         {
             NdArray[] ndArrays = new NdArray[i_input.length];
@@ -83,8 +86,12 @@ import jp.nyatla.kelpjava.loss.SingleLossFunction.Result;
 
             return functionStack.predict(ndArrays);
         }
-
-        //予想を実行する[非バッチ]（外部からの使用を想定してArrayが引数
+        /**
+         * 予想を実行する[非バッチ]（外部からの使用を想定してArrayが引数
+         * @param functionStack
+         * @param i_input
+         * @return
+         */
         public NdArray predict(FunctionStack functionStack, NdArray i_input)
         {
             return functionStack.predict(i_input);

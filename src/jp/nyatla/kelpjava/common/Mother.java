@@ -1,17 +1,14 @@
 ﻿package jp.nyatla.kelpjava.common;
 
-import java.util.Random;
+
+
 
 /**
  * 乱数の素 C#ではRandomを複数同時にインスタンスすると似たような値しか吐かないため 一箇所でまとめて管理しておく必要がある
  */
 public class Mother {
-	// #if DEBUG
-	// //デバッグ時はシードを固定
-	// public static Random Dice = new Random(128);
-	// #else
-	public static Random Dice = new Random();
-	// #endif
+//	public static Random Dice = new Random(128);
+	public static XorShift31Rand Dice = new XorShift31Rand(128);
 	static double Alpha, Beta, BoxMuller1, BoxMuller2;
 	static boolean Flip;
 	public static double Mu = 0.0;

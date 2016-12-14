@@ -1,73 +1,70 @@
 ﻿package jp.nyatla.kelpjava.io;
 
-public class MnistData
-    {
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-        private double[][][][] X;
-        private int[][] Tx;
+import jp.nyatla.kelpjava.common.Mother;
+import jp.nyatla.kelpjava.common.NdArray;
 
-        private double[][][][] Y;
-        private int[][] Ty;
+/**
+ * Mnistデータを格納するクラスです。
+ * Mnist形式の画像とNdArrayでのアクセス手段を提供します。
+ * 
+ */
+public class MnistData {
+	public class DataSet
+	{
+		final public NdArray[] image;
+		final public NdArray[] label;
 
-        public MnistData(MnistLabelFile i_trainlabel,MnistImageFile i_traindata,MnistLabelFile i_teachlabel,MnistImageFile i_teachdata)
-        {
-            //トレーニングデータ
-            this.X = new double[i_traindata.numberOfImages][1][28][28];
-            //トレーニングデータラベル
-            this.Tx = new int[i_trainlabel.numberOfItems][1];
+		protected DataSet(NdArray[] i_image, NdArray[] i_teach) {
+			this.image = i_image;
+			this.label = i_teach;
+		}
+	}
 
-            for (int i = 0; i < i_traindata.numberOfImages; i++)
-            {
-            	for(int p=0;p<28*28;p++){
-            		this.X[i][0][p/28][p%28]=i_traindata.bitmapList[i][p];
-            	}
-                this.Tx[i][0] = (int)i_trainlabel.labelList[i];
-            }
+	final private List<NdArray> image = new ArrayList<NdArray>();
+	final private List<NdArray> label = new ArrayList<NdArray>();
 
-            //教師データ
-            this.Y = new double[i_teachdata.numberOfImages][1][28][28];
-            //教師データラベル
-            this.Ty = new int[this.mnistDataLoader.TeachData.Length][];
-            
-            for (int i = 0; i < this.mnistDataLoader.TeachData.Length; i++)
-            {
-                Buffer.BlockCopy(this.mnistDataLoader.TeachData[i].Select(val => val / 255.0).ToArray(), 0, this.Y[i], 0, sizeof(double) *this.Y[i].Length);
-                this.Ty[i] = new[] { (int)this.mnistDataLoader.TeachLabel[i] };
-            }
-        }
+	public MnistData(File i_image_file,File i_label_file) throws IOException {
+		this(new MnistImageFile(i_image_file),new MnistLabelFile(i_label_file));
+	}
 
-        public MnistDataSet GetRandomYSet(int dataCount)
-        {
-            List<double[,,]> listY = new List<double[,,]>();
-            List<int[]> listTy = new List<int[]>();
+	public MnistData(MnistImageFile i_image_file,MnistLabelFile i_label_file) {
+		for (int i = 0; i < i_image_file.numberOfImages; i++) {
+			// トレーニングデータ
+			double[] data = new double[28 * 28];
+			for (int p = 0; p < 28 * 28; p++) {
+				data[p] = (i_image_file.bitmapList[i][p] & 0x000000ff)/255.0;
+			}
+			NdArray img = new NdArray(data, new int[] { 1, 28, 28 }, false);
+			// トレーニングデータラベル
+			double[] teach = new double[1];
+			teach[0] = (int) i_label_file.labelList[i];
+			NdArray label = new NdArray(teach, new int[] { 1 }, false);
+			this.image.add(img);
+			this.label.add(label);
+		}
+	}
 
-            for (int j = 0; j < dataCount; j++)
-            {
-                int index = Mother.Dice.Next(this.Y.Length);
-
-                listY.Add(this.Y[index]);
-                listTy.Add(this.Ty[index]);
-            }
-
-            return new MnistDataSet(listY.ToArray(),listTy.ToArray());
-        }
-
-        public MnistDataSet GetRandomXSet(int dataCount)
-        {
-            List<double[,,]> listX = new List<double[,,]>();
-            List<int[]> listTx = new List<int[]>();
-
-            for (int j = 0; j < dataCount; j++)
-            {
-                int index = Mother.Dice.Next(this.X.Length);
-
-                listX.Add(this.X[index]);
-                listTx.Add(this.Tx[index]);
-            }
-
-            return new MnistDataSet(listX.ToArray(), listTx.ToArray());
-        }
-    }
-
-
-
+	/**
+	 * ランダムに選択したデータセットを返します。
+	 * @param i_dataCount
+	 * データセットの数を指定します。
+	 * @return
+	 */
+	public DataSet getRandomDataSet(int i_dataCount)
+	{
+		int s = this.image.size();
+		NdArray[] image=new NdArray[i_dataCount];
+		NdArray[] label=new NdArray[i_dataCount];
+		for (int j = 0; j < i_dataCount; j++) {
+			int index = Mother.Dice.nextInt(s);
+			image[j]=this.image.get(index);
+			label[j]=this.label.get(index);
+		}
+		return new DataSet(image,label);
+	}
+}
