@@ -161,4 +161,11 @@ public class JavaUtils {
 		}
 		return ret;
 	}
+	public static double[] fill(double[] i_array,double i_fill_value)
+	{
+		for(int i=i_array.length-1;i>=0;i--){
+			i_array[i]=i_fill_value;
+		}
+		return i_array;
+	}
 }

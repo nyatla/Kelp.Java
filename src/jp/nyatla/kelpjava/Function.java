@@ -54,6 +54,10 @@ public abstract class Function implements IDuplicatable,Serializable
 		this.outputCount = i_oututCount;
 		this.parameters=null;
 	}
+    public void setOptimizer(Optimizer i_optimizer)
+    {
+    	this.setOptimizer(new Optimizer[]{i_optimizer});
+    }
     public void setOptimizer(Optimizer[] i_optimizers)
     {
         this.optimizers = i_optimizers;
@@ -188,31 +192,32 @@ public abstract class Function implements IDuplicatable,Serializable
 		return this.name;
 	}
 
-	protected void initWeight(NdArray i_array) {
-		this.initWeight(i_array, 1.0);
+	
+	protected static NdArray initWeight(NdArray i_array) {
+		return initWeight(i_array, 1.0);
 	}
-
 	/**
 	 * 初期値が入力されなかった場合、この関数で初期化を行う
 	 * @param array
 	 * @param masterScale
 	 */
-	protected void initWeight(NdArray i_array, double i_masterScale) {
+	protected static NdArray initWeight(NdArray i_array, double i_masterScale) {
 		double localScale = 1 / Math.sqrt(2);
-		int fanIn = this.getFans(i_array.shape);
+		int fanIn = getFans(i_array.shape);
 		double s = localScale * Math.sqrt(2.0 / fanIn);
 
 		for (int i = 0; i < i_array.length(); i++) {
-			i_array.data[i] = this.normal(s) * i_masterScale;
+			i_array.data[i] = normal(s) * i_masterScale;
 		}
+		return i_array;
 	}
 
-	private double normal(double i_scale) {
+	private static double normal(double i_scale) {
 		Mother.Sigma = i_scale;
 		return Mother.RandomNormal();
 	}
 
-	private int getFans(int[] i_shape) {
+	private static int getFans(int[] i_shape) {
 		int result = 1;
 
 		for (int i = 1; i < i_shape.length; i++) {

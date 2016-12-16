@@ -31,33 +31,26 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
         }
         public Linear(int i_inputCount, int i_outputCount,String i_name)
         {
-        	this(i_inputCount,i_outputCount,false,null,null,i_name);
+        	this(
+        		i_inputCount,i_outputCount,
+        		false,
+        		initWeight(NdArray.zeros(i_outputCount,i_inputCount)),
+        		NdArray.zeros(i_outputCount),
+        		i_name);
         }
         
-        public Linear(int i_inputCount, int i_outputCount, boolean noBias,double[] initialW, double[] initialb, String i_name)
+        public Linear(int i_inputCount, int i_outputCount, boolean i_noBias,NdArray i_initialW, NdArray i_initialb, String i_name)
         {
         	super(i_name, i_inputCount, i_outputCount);
-            this.W = NdArray.zeros(i_outputCount,i_inputCount);
+            this.W = i_initialW;
             this.gW = NdArray.zerosLike(this.W);
-            this.parameters = new FunctionParameter[noBias ? 1 : 2];
-            if (initialW == null)
-            {
-                this.initWeight(this.W);
-            }
-            else
-            {
-            	System.arraycopy(initialW, 0,this.W.data,0,initialW.length);
-            }
+            this.parameters = new FunctionParameter[i_noBias ? 1 : 2];
             this.parameters[0] = new FunctionParameter(this.W, this.gW, this.name + " W");
             //noBias=trueでもbiasを用意して更新しない
-            this.b = NdArray.zeros(i_outputCount);
+            this.b = i_initialb;
             this.gb = NdArray.zerosLike(this.b);
-            if (!noBias)
+            if (!i_noBias)
             {
-                if (initialb != null)
-                {
-                	System.arraycopy(initialb, 0,this.b.data,0,initialb.length);
-                }
                 this.parameters[1] = new FunctionParameter(this.b, this.gb, this.name + " b");
             }
         }

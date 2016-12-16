@@ -33,6 +33,7 @@ final public class NdArray implements IDuplicatable,Serializable
 			this.shape = i_shape;
 		}
 	}
+	
 	/**
 	 * Rank1の配列からインスタンスを生成します。
 	 * @param i_data
@@ -47,24 +48,69 @@ final public class NdArray implements IDuplicatable,Serializable
 		this.shape=new int[]{i_data.length};
 	}
 	/**
+	 * Rank1の配列からインスタンスを生成します。
+	 * {@link NdArray#NdArray(double[],true)}と同じです。
+	 * @param i_data
+	 */
+	public NdArray(double[] i_data)
+	{
+		this(i_data,true);
+	}
+	
+	/**
 	 * Rank2の配列からインスタンスを生成します。
 	 * @param i_data
 	 */
 	public NdArray(double[][] i_data)
 	{
-		int size=i_data[0].length;
-		for(int i=1;i<i_data.length;i++){
-			if(i_data[i].length!=size){
-				throw new IllegalArgumentException();
+		int s1=i_data.length;
+		int s2=i_data[0].length;
+		this.data=new double[s1*s2];
+		int p=0;
+		for(int i=0;i<s1;i++){
+			for(int j=0;j<s2;j++){
+				this.data[p]=i_data[i][j];
+				p++;
 			}
 		}
-		this.data=new double[size*i_data.length];
-		for(int i=0;i<i_data.length;i++){
-			for(int j=0;j<size;j++){
-				this.data[i*size+j]=i_data[i][j];
+		this.shape=new int[]{s1,s2};
+	}
+	public NdArray(double[][][] i_data)
+	{
+		int s1=i_data.length;
+		int s2=i_data[0].length;
+		int s3=i_data[0][0].length;
+		int p=0;
+		this.data=new double[s1*s2*s3];
+		for(int i1=0;i1<s1;i1++){
+			for(int i2=0;i2<s2;i2++){
+				for(int i3=0;i3<s3;i3++){
+					this.data[p]=i_data[i1][i2][i3];
+					p++;
+				}
 			}
 		}
-		this.shape=new int[]{i_data.length,size};
+		this.shape=new int[]{s1,s2,s3};
+	}	
+	public NdArray(double[][][][] i_data)
+	{
+		int s1=i_data.length;
+		int s2=i_data[0].length;
+		int s3=i_data[0][0].length;
+		int s4=i_data[0][0][0].length;
+		int p=0;
+		this.data=new double[s1*s2*s3*s4];
+		for(int i1=0;i1<s1;i1++){
+			for(int i2=0;i2<s2;i2++){
+				for(int i3=0;i3<s3;i3++){
+					for(int i4=0;i4<s4;i4++){
+						this.data[p]=i_data[i1][i2][i3][i4];
+						p++;
+					}
+				}
+			}
+		}
+		this.shape=new int[]{s1,s2,s3,s4};
 	}
 	
 	public int length() {
@@ -73,18 +119,6 @@ final public class NdArray implements IDuplicatable,Serializable
 	public int rank() {
 		return this.shape.length;
 	}
-
-	// //繰り返し呼び出されるシーンでは使用しないこと
-	// public double Get(params int[] indices)
-	// {
-	// return this.Data[this.GetIndex(indices)];
-	// }
-	//
-	// //繰り返し呼び出されるシーンでは使用しないこと
-	// public void Set(int[] indices, double val)
-	// {
-	// this.Data[this.GetIndex(indices)] = val;
-	// }
 
 	public static NdArray zerosLike(NdArray baseArray) {
 		return new NdArray(new double[baseArray.length()], baseArray.shape.clone(),false);
