@@ -34,20 +34,20 @@ import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
         	this(
         		i_inputCount,i_outputCount,
         		false,
-        		initWeight(NdArray.zeros(i_outputCount,i_inputCount)),
-        		NdArray.zeros(i_outputCount),
+        		null,
+        		null,
         		i_name);
         }
         
         public Linear(int i_inputCount, int i_outputCount, boolean i_noBias,NdArray i_initialW, NdArray i_initialb, String i_name)
         {
         	super(i_name, i_inputCount, i_outputCount);
-            this.W = i_initialW;
+            this.W = i_initialW!=null?i_initialW:initWeight(NdArray.zeros(i_outputCount,i_inputCount));
             this.gW = NdArray.zerosLike(this.W);
             this.parameters = new FunctionParameter[i_noBias ? 1 : 2];
             this.parameters[0] = new FunctionParameter(this.W, this.gW, this.name + " W");
             //noBias=trueでもbiasを用意して更新しない
-            this.b = i_initialb;
+            this.b = i_initialb!=null?i_initialb:NdArray.zeros(i_outputCount);
             this.gb = NdArray.zerosLike(this.b);
             if (!i_noBias)
             {

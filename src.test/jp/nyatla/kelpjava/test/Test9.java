@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using KelpNet;
-using KelpNet.Common;
-using KelpNet.Functions.Activations;
-using KelpNet.Functions.Connections;
-using KelpNet.Loss;
-using KelpNet.Optimizers;
-using VocabularyMaker;
+﻿package jp.nyatla.kelpjava.test;
 
-namespace KelpNetTester.Tests
-{
     //SimpleなRNNによるRNNLM
     //『Chainerによる実践深層学習』より（ISBN 978-4-274-21934-4）
     class Test9

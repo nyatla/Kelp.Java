@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using KelpNet;
-using KelpNet.Common;
-using KelpNet.Functions.Connections;
-using KelpNet.Functions.Noise;
-using KelpNet.Loss;
-using KelpNet.Optimizers;
-using VocabularyMaker;
+﻿package jp.nyatla.kelpjava.test;
 
-namespace KelpNetTester.Tests
-{
     //ChainerのRNNサンプルを再現
     //https://github.com/pfnet/chainer/tree/master/examples/ptb
     class Test10

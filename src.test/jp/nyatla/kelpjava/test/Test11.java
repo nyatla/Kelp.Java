@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using KelpNet;
-using KelpNet.Common;
-using KelpNet.Functions.Activations;
-using KelpNet.Functions.Connections;
-using KelpNet.Functions.Normalization;
-using KelpNet.Loss;
-using KelpNet.Optimizers;
+﻿package jp.nyatla.kelpjava.test;
 
-namespace KelpNetTester.Tests
-{
     //Decoupled Neural Interfaces using Synthetic GradientsによるMNIST（手書き文字）の学習
     // http://ralo23.hatenablog.com/entry/2016/10/22/233405
     class Test11

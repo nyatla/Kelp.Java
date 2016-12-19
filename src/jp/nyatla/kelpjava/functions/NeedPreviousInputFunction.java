@@ -7,7 +7,7 @@ import jp.nyatla.kelpjava.Function;
 import jp.nyatla.kelpjava.common.NdArray;
 
 /**
- * 前回の入出力を自動的に扱うクラステンプレート [Serializable]
+ * 前回の入力を自動的に扱うクラステンプレート [Serializable]
  */
 public abstract class NeedPreviousInputFunction extends Function
 {

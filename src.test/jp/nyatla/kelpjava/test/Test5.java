@@ -10,7 +10,10 @@ import jp.nyatla.kelpjava.functions.poolings.MaxPooling;
 import jp.nyatla.kelpjava.loss.MeanSquaredError;
 import jp.nyatla.kelpjava.optimizers.SGD;
 
-//エクセルCNNの再現
+/**
+ * エクセルCNNの再現
+ *
+ */
 class Test5 {
 	public static void main(String[] args) {
 		// 各初期値を記述

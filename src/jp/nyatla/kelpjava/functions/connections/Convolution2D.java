@@ -30,15 +30,47 @@ public class Convolution2D extends NeedPreviousInputFunction {
 		this._stride=i_src._stride;
 		this._pad=i_src._pad;
 	}
-
-	public Convolution2D(int i_inputChannels, int i_outputChannels, int i_kSize) {
-		this(	i_inputChannels,i_outputChannels,i_kSize,
-				1, 0, false,
-				initWeight(NdArray.zeros(i_outputChannels, i_inputChannels,i_kSize, i_kSize)),
-				NdArray.zeros(i_outputChannels),
-				"Conv2D");
+	/**
+	 * 
+	 * @param i_inputChannels
+	 * @param i_outputChannels
+	 * @param i_kSize
+	 * @param i_pad
+	 */
+	public Convolution2D(int i_inputChannels, int i_outputChannels, int i_kSize,int i_pad)
+	{
+		this(i_inputChannels,i_outputChannels,i_kSize,i_pad,"Conv2D");
 	}
 
+	/**
+	 * 
+	 * @param i_inputChannels
+	 * @param i_outputChannels
+	 * @param i_kSize
+	 * @param i_pad
+	 * @param i_name
+	 */
+	public Convolution2D(int i_inputChannels, int i_outputChannels, int i_kSize,int i_pad, String i_name) {
+		this(	i_inputChannels,i_outputChannels,i_kSize,
+				1,i_pad, false,
+				initWeight(NdArray.zeros(i_outputChannels, i_inputChannels,i_kSize, i_kSize)),
+				NdArray.zeros(i_outputChannels),
+				i_name);
+	}
+
+
+	/**
+	 * 
+	 * @param i_inputChannels
+	 * @param i_outputChannels
+	 * @param i_kSize
+	 * @param i_stride
+	 * @param i_pad
+	 * @param i_noBias
+	 * @param i_initialW
+	 * @param i_initialb
+	 * @param i_name
+	 */
 	public Convolution2D(int i_inputChannels, int i_outputChannels,int i_kSize, int i_stride, int i_pad, boolean i_noBias,NdArray i_initialW, NdArray i_initialb, String i_name) {
 		super(i_name, i_inputChannels, i_outputChannels);
 		this._kSize = i_kSize;

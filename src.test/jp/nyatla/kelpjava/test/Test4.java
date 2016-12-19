@@ -33,12 +33,8 @@ public class Test4 {
 	public static void main(String[] args) throws IOException {
 		// MNISTのデータを用意する
 		System.out.println("MNIST Data Loading...");
-		MnistData train = new MnistData(
-				new File("data/train-images.idx3-ubyte"), new File(
-						"data/train-labels.idx1-ubyte"));
-		MnistData teach = new MnistData(
-				new File("data/t10k-images.idx3-ubyte"), new File(
-						"data/t10k-labels.idx1-ubyte"));
+		MnistData train = new MnistData(new File("data/train-images.idx3-ubyte"), new File("data/train-labels.idx1-ubyte"));
+		MnistData teach = new MnistData(new File("data/t10k-images.idx3-ubyte"), new File("data/t10k-labels.idx1-ubyte"));
 
 		System.out.println("Training Start...");
 
@@ -73,7 +69,7 @@ public class Test4 {
 							+ TRAIN_DATA_COUNT);
 					// 結果出力
 					System.out.println("total loss "
-							+ JavaUtils.average(totalLoss));
+							+ JavaUtils.average(totalLoss,i));
 					System.out.println("local loss " + sumLoss);
 
 					System.out.println("\nTesting...");

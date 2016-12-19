@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using KelpNet;
-using KelpNet.Common;
-using KelpNet.Functions.Activations;
-using KelpNet.Functions.Connections;
-using KelpNet.Functions.Normalization;
-using KelpNet.Loss;
-using KelpNet.Optimizers;
+﻿package jp.nyatla.kelpjava.test;
 
-namespace KelpNetTester.Tests
-{
     //Decoupled Neural Interfaces using Synthetic GradientsによるMNIST（手書き文字）の学習
     // 教師信号にラベル情報を混ぜ込むcDNI
     // モデルDと表現されている全層のDecoupledを非同期で実行

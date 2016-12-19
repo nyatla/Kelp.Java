@@ -124,7 +124,8 @@ final public class NdArray implements IDuplicatable,Serializable
 		return new NdArray(new double[baseArray.length()], baseArray.shape.clone(),false);
 	}
 
-	public static NdArray onesLike(NdArray baseArray) {
+	public static NdArray onesLike(NdArray baseArray)
+	{
 		double[] resutlArray = new double[baseArray.length()];
 
 		for (int i = 0; i < resutlArray.length; i++) {
@@ -135,6 +136,13 @@ final public class NdArray implements IDuplicatable,Serializable
 
 	public static NdArray zeros(int... i_shape) {
 		return new NdArray(new double[shapeToArrayLength(i_shape)], i_shape,false);
+	}
+	public static NdArray ones(int... i_shape) {
+		NdArray n=new NdArray(new double[shapeToArrayLength(i_shape)], i_shape,false);
+		for(int i=0;i<n.data.length;i++){
+			n.data[i]=1.0;
+		}
+		return n;
 	}
 
 	//

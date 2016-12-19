@@ -35,13 +35,15 @@ public class JavaUtils {
 	 * @return
 	 */
 	public static double sum(double[] i_v) {
+		return sum(i_v,i_v.length);
+	}
+	public static double sum(double[] i_v,int i_len) {
 		double sum = 0;
-		for (int i = i_v.length - 1; i >= 0; i--) {
+		for (int i = i_len - 1; i >= 0; i--) {
 			sum += i_v[i];
 		}
 		return sum;
 	}
-
 	/**
 	 * 配列の値すべてを加算して、平均値を返します。
 	 * 
@@ -49,9 +51,11 @@ public class JavaUtils {
 	 * @return
 	 */
 	public static double average(double[] i_v) {
-		return sum(i_v) / i_v.length;
+		return average(i_v,i_v.length);
 	}
-
+	public static double average(double[] i_v,int i_len) {
+		return sum(i_v,i_len) / i_len;
+	}
 	/**
 	 * 配列から値の一致する要素のインデクスを返します。
 	 * 
@@ -167,5 +171,17 @@ public class JavaUtils {
 			i_array[i]=i_fill_value;
 		}
 		return i_array;
+	}
+
+	public static double[][] cloneArray(double[][] xhat)
+	{
+		double[][] r=new double[xhat.length][];
+		for(int i=0;i<xhat.length;i++){
+			r[i]=new double[xhat[i].length];
+			for(int j=0;j<xhat[i].length;j++){
+				r[i][j]=xhat[i][j];
+			}
+		}
+		return r;
 	}
 }
