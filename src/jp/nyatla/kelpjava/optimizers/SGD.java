@@ -11,7 +11,7 @@ import jp.nyatla.kelpjava.OptimizerParameter;
 public class SGD extends Optimizer
 {
 	private static final long serialVersionUID = 5440602882523432289L;
-	final public double learningRate;
+	public double learningRate;
 	/**
 	 * コピーコンストラクタ
 	 * @param i_src

@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.List;
 
 public class JavaUtils {
 	/**
@@ -44,6 +45,20 @@ public class JavaUtils {
 		}
 		return sum;
 	}
+	public static double sum(Double[] i_v,int i_len) {
+		double sum = 0;
+		for (int i = i_len - 1; i >= 0; i--) {
+			sum += i_v[i];
+		}
+		return sum;
+	}
+	private static double sum(List<Double> i_v, int i_len) {
+		double sum = 0;
+		for (int i = i_len - 1; i >= 0; i--) {
+			sum += i_v.get(i);
+		}
+		return sum;
+	}	
 	/**
 	 * 配列の値すべてを加算して、平均値を返します。
 	 * 
@@ -55,6 +70,29 @@ public class JavaUtils {
 	}
 	public static double average(double[] i_v,int i_len) {
 		return sum(i_v,i_len) / i_len;
+	}
+	public static double average(Double[] i_v) {
+		return average(i_v,i_v.length);
+	}
+	public static double average(Double[] i_v,int i_len) {
+		return sum(i_v,i_len) / i_len;
+	}
+	public static double average(List<Double> i_v) {
+		return sum(i_v,i_v.size())/i_v.size();
+	}	
+
+
+	public static double[][] toDoubleArray(int[][] i_array)
+	{
+		double[][] ret=new double[i_array.length][];
+		for(int i=0;i<i_array.length;i++){
+			double[] d=new double[i_array[i].length];
+			for(int j=0;j<i_array[i].length;j++){
+				d[j]=i_array[i][j];
+			}
+			ret[i]=d;
+		}
+		return ret;
 	}
 	/**
 	 * 配列から値の一致する要素のインデクスを返します。
@@ -184,4 +222,6 @@ public class JavaUtils {
 		}
 		return r;
 	}
+
+
 }

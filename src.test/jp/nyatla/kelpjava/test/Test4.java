@@ -9,8 +9,8 @@ import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.functions.activations.Sigmoid;
 import jp.nyatla.kelpjava.functions.connections.Linear;
-import jp.nyatla.kelpjava.io.MnistData;
-import jp.nyatla.kelpjava.io.MnistData.DataSet;
+import jp.nyatla.kelpjava.io.mnist.MnistData;
+import jp.nyatla.kelpjava.io.mnist.MnistData.DataSet;
 import jp.nyatla.kelpjava.loss.LossFunction;
 import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
 import jp.nyatla.kelpjava.optimizers.MomentumSGD;
@@ -33,8 +33,8 @@ public class Test4 {
 	public static void main(String[] args) throws IOException {
 		// MNISTのデータを用意する
 		System.out.println("MNIST Data Loading...");
-		MnistData train = new MnistData(new File("data/train-images.idx3-ubyte"), new File("data/train-labels.idx1-ubyte"));
-		MnistData teach = new MnistData(new File("data/t10k-images.idx3-ubyte"), new File("data/t10k-labels.idx1-ubyte"));
+		MnistData train = new MnistData(new File("data/mnist/train-images.idx3-ubyte"), new File("data/mnist/train-labels.idx1-ubyte"));
+		MnistData teach = new MnistData(new File("data/mnist/t10k-images.idx3-ubyte"), new File("data/mnist/t10k-labels.idx1-ubyte"));
 
 		System.out.println("Training Start...");
 

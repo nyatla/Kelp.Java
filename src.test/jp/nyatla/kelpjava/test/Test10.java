@@ -1,123 +1,146 @@
 ﻿package jp.nyatla.kelpjava.test;
 
-    //ChainerのRNNサンプルを再現
-    //https://github.com/pfnet/chainer/tree/master/examples/ptb
-    class Test10
-    {
-        const int N_EPOCH = 39;
-        const int N_UNITS = 650;
-        const int BATCH_SIZE = 20;
-        const int BPROP_LEN = 35;
-        const int GRAD_CLIP = 5;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
-        public static void Run()
-        {
-            Console.WriteLine("Build Vocabulary.");
+import jp.nyatla.kelpjava.FunctionStack;
+import jp.nyatla.kelpjava.Optimizer;
+import jp.nyatla.kelpjava.common.NdArray;
+import jp.nyatla.kelpjava.functions.connections.EmbedID;
+import jp.nyatla.kelpjava.functions.connections.LSTM;
+import jp.nyatla.kelpjava.functions.connections.Linear;
+import jp.nyatla.kelpjava.functions.noise.Dropout;
+import jp.nyatla.kelpjava.io.vocabulary.IndexedTextData;
+import jp.nyatla.kelpjava.io.vocabulary.VocabularyText;
+import jp.nyatla.kelpjava.loss.LossFunction;
+import jp.nyatla.kelpjava.loss.LossFunction.Results;
+import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
+import jp.nyatla.kelpjava.optimizers.GradientClipping;
+import jp.nyatla.kelpjava.optimizers.SGD;
 
-            Vocabulary vocabulary = new Vocabulary();
+/**
+ * ChainerのRNNサンプルを再現 https://github.com/pfnet/chainer/tree/master/examples/ptb
+ */
+class Test10 {
+	final static int N_EPOCH = 39;
+	final static int N_UNITS = 650;
+	final static int BATCH_SIZE = 20;
+	final static int BPROP_LEN = 35;
+	final static int GRAD_CLIP = 5;
 
-            int[] trainData = vocabulary.LoadData("data/ptb.train.txt");
-            int[] validData = vocabulary.LoadData("data/ptb.valid.txt");
-            int[] testData = vocabulary.LoadData("data/ptb.test.txt");
+	public static void main(String[] args) throws IOException {
+		System.out.println("Build Vocabulary.");
 
-            int nVocab = vocabulary.Length;
+		VocabularyText trainText = new VocabularyText(new File("data/ptb/ptb.train.txt"));
+		VocabularyText validText = new VocabularyText(new File("data/ptb/ptb.valid.txt"));
+		VocabularyText testText = new VocabularyText(new File("data/ptb/ptb.test.txt"));
 
-            Console.WriteLine("Network Initilizing.");
-            FunctionStack model = new FunctionStack(
-                new EmbedID(nVocab, N_UNITS, name: "l1 EmbedID"),
-                new Dropout(),
-                new LSTM(N_UNITS, N_UNITS, name: "l2 LSTM"),
-                new Dropout(),
-                new LSTM(N_UNITS, N_UNITS, name: "l3 LSTM"),
-                new Dropout(),
-                new Linear(N_UNITS, nVocab, name: "l4 Linear")
-            );
+		IndexedTextData textdata = new IndexedTextData();
+		textdata.add(trainText.text);
+		textdata.add(validText.text);
+		textdata.add(testText.text);
+		int[] trainData = textdata.getTextIds(trainText.text);
+		int[] testData = textdata.getTextIds(testText.text);
+		int[] validData=textdata.getTextIds(validText.text);
 
-            //与えられたthresholdで頭打ちではなく、全パラメータのL2Normからレートを取り補正を行う
-            GradientClipping gradientClipping = new GradientClipping(threshold: GRAD_CLIP);
-            SGD sgd = new SGD(learningRate: 1.0);
-            model.SetOptimizer(gradientClipping, sgd);
+		int nVocab = textdata.getLength();
 
-            double wholeLen = trainData.Length;
-            int jump = (int)Math.Floor(wholeLen / BATCH_SIZE);
-            int epoch = 0;
+		System.out.println("Network Initilizing.");
+		FunctionStack model = new FunctionStack(
+				new EmbedID(nVocab, N_UNITS,"l1 EmbedID"),
+				new Dropout(),
+				new LSTM(N_UNITS, N_UNITS,"l2 LSTM"),
+				new Dropout(),
+				new LSTM(N_UNITS, N_UNITS, "l3 LSTM"),
+				new Dropout(),
+				new Linear(N_UNITS, nVocab, "l4 Linear"));
 
-            Stack<NdArray[]> backNdArrays = new Stack<NdArray[]>();
+		// 与えられたthresholdで頭打ちではなく、全パラメータのL2Normからレートを取り補正を行う
+		GradientClipping gradientClipping = new GradientClipping(GRAD_CLIP);
+		SGD sgd = new SGD(1.0);
+		model.setOptimizer(new Optimizer[] { gradientClipping, sgd });
 
-            Console.WriteLine("Train Start.");
+		double wholeLen = trainData.length;
+		int jump = (int) Math.floor(wholeLen / BATCH_SIZE);
+		int epoch = 0;
 
-            for (int i = 0; i < jump * N_EPOCH; i++)
-            {
-                NdArray[] x = new NdArray[BATCH_SIZE];
-                NdArray[] t = new NdArray[BATCH_SIZE];
+		Stack<NdArray[]> backNdArrays = new Stack<NdArray[]>();
 
-                for (int j = 0; j < BATCH_SIZE; j++)
-                {
-                    x[j] = NdArray.FromArray(new[] { trainData[(int)((jump * j + i) % wholeLen)] });
-                    t[j] = NdArray.FromArray(new[] { trainData[(int)((jump * j + i + 1) % wholeLen)] });
-                }
+		System.out.println("Train Start.");
 
-                double sumLoss;
-                backNdArrays.Push(new SoftmaxCrossEntropy().Evaluate(model.Forward(x), t, out sumLoss));
-                Console.WriteLine("[{0}/{1}] Loss: {2}", i + 1, jump, sumLoss);
+		for (int i = 0; i < jump * N_EPOCH; i++) {
+			NdArray[] x = new NdArray[BATCH_SIZE];
+			NdArray[] t = new NdArray[BATCH_SIZE];
 
-                //Run truncated BPTT
-                if ((i + 1) % BPROP_LEN == 0)
-                {
-                    for (int j = 0; backNdArrays.Count > 0; j++)
-                    {
-                        Console.WriteLine("backward" + backNdArrays.Count);
-                        model.Backward(backNdArrays.Pop());
-                    }
+			for (int j = 0; j < BATCH_SIZE; j++) {
+				x[j] = new NdArray(new double[]{trainData[(int) ((jump* j + i) % wholeLen)]});
+				t[j] = new NdArray(new double[]{trainData[(int) ((jump* j + i + 1) % wholeLen)]});
+			}
 
-                    model.Update();
-                    model.ResetState();
-                }
+			SoftmaxCrossEntropy softmaxCrossEntropy = new SoftmaxCrossEntropy();
+			Results sumLoss = softmaxCrossEntropy.evaluate(model.forward(x), t);
 
-                if ((i + 1) % jump == 0)
-                {
-                    epoch++;
-                    Console.WriteLine("evaluate");
-                    Console.WriteLine("validation perplexity: {0}", Evaluate(model, validData));
+			backNdArrays.push(sumLoss.data);
+			System.out.printf("[%d/%d] Loss:%f\n", i + 1, jump, sumLoss.loss);
 
-                    if (epoch >= 6)
-                    {
-                        sgd.LearningRate /= 1.2;
-                        Console.WriteLine("learning rate =" + sgd.LearningRate);
-                    }
-                }
-            }
+			// Run truncated BPTT
+			if ((i + 1) % BPROP_LEN == 0) {
+				for (int j = 0; backNdArrays.size() > 0; j++) {
+					System.out.println("backward" + backNdArrays.size());
+					model.backward(backNdArrays.pop());
+				}
 
-            Console.WriteLine("test start");
-            double testPerp = Evaluate(model, testData);
-            Console.WriteLine("test perplexity:" + testPerp);
-        }
+				model.update();
+				model.resetState();
+			}
 
-        static double Evaluate(FunctionStack model, int[] dataset)
-        {
-            FunctionStack predictModel = model.Clone();
-            predictModel.ResetState();
+			if ((i + 1) % jump == 0) {
+				epoch++;
+				System.out.println("evaluate");
+				System.out.printf("validation perplexity: %f\n",
+						Evaluate(model, validData));
 
-            List<double> totalLoss = new List<double>();
+				if (epoch >= 6) {
+					sgd.learningRate /= 1.2;
+					System.out.println("learning rate =" + sgd.learningRate);
+				}
+			}
+		}
 
-            for (int i = 0; i < dataset.Length - 1; i++)
-            {
-                NdArray[] x = new NdArray[BATCH_SIZE];
-                NdArray[] t = new NdArray[BATCH_SIZE];
+		System.out.println("test start");
+		double testPerp = Evaluate(model, testData);
+		System.out.println("test perplexity:" + testPerp);
+	}
 
-                for (int j = 0; j < BATCH_SIZE; j++)
-                {
-                    x[j] = NdArray.FromArray(new[] { dataset[j + i] });
-                    t[j] = NdArray.FromArray(new[] { dataset[j + i + 1] });
-                }
+	static double Evaluate(FunctionStack model, int[] dataset) {
+		FunctionStack predictModel = (FunctionStack) model.deepCopy();
+		predictModel.resetState();
 
-                double sumLoss;
-                new SoftmaxCrossEntropy().Evaluate(predictModel.Forward(x), t, out sumLoss);
-                totalLoss.Add(sumLoss);
-            }
+		List<Double> totalLoss = new ArrayList<Double>();
 
-            //calc perplexity
-            return Math.Exp(totalLoss.Sum() / (totalLoss.Count - 1));
-        }
-    }
+		for (int i = 0; i < dataset.length - 1; i++) {
+			NdArray[] x = new NdArray[BATCH_SIZE];
+			NdArray[] t = new NdArray[BATCH_SIZE];
+
+			for (int j = 0; j < BATCH_SIZE; j++) {
+				x[j] = NdArray.fromArray(new double[] { dataset[j + i] });
+				t[j] = NdArray.fromArray(new double[] { dataset[j + i + 1] });
+			}
+
+			LossFunction.Results sumLoss;
+			sumLoss = new SoftmaxCrossEntropy().evaluate(
+					predictModel.forward(x), t);
+			totalLoss.add(sumLoss.loss);
+		}
+		double total_loss = 0;
+		for (Double i : totalLoss) {
+			total_loss += i;
+		}
+
+		// calc perplexity
+		return Math.exp(total_loss / (totalLoss.size() - 1));
+	}
 }

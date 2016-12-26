@@ -18,9 +18,12 @@ public class EmbedID extends NeedPreviousInputFunction {
 	public EmbedID(int i_inputCount, int outputCount) {
 		this(i_inputCount, outputCount, null, null);
 	}
+	public EmbedID(int i_inputCount, int outputCount,String i_name) {
+		this(i_inputCount, outputCount, null, i_name);
+	}
 
-	public EmbedID(int inputCount, int outputCount, NdArray initialW,
-			String name) {
+	public EmbedID(int inputCount, int outputCount, NdArray initialW,String name)
+	{
 		super(name, inputCount, outputCount);
 
 		if (initialW == null) {

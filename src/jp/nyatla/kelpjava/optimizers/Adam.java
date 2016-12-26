@@ -28,15 +28,18 @@ public class Adam extends Optimizer {
 	}
 
 	public Adam() {
-		this(0.001, 0.9, 0.999, 1e-8);
+		this(0.001);
+	}
+	public Adam(double i_alpha) {
+		this(i_alpha, 0.9, 0.999, 1e-8);
 	}
 
-	public Adam(double alpha, double beta1, double beta2, double epsilon) {
+	public Adam(double i_alpha, double i_beta1, double i_beta2, double i_epsilon) {
 		super();
-		this.Alpha = alpha;
-		this.Beta1 = beta1;
-		this.Beta2 = beta2;
-		this.Epsilon = epsilon;
+		this.Alpha = i_alpha;
+		this.Beta1 = i_beta1;
+		this.Beta2 = i_beta2;
+		this.Epsilon = i_epsilon;
 	}
 
 	public void initilise(FunctionParameter[] i_functionParameters) {
