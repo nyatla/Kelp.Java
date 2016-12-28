@@ -1,8 +1,8 @@
 ﻿package jp.nyatla.kelpjava.functions.connections;
 
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.NdArray;
-import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.functions.common.NeedPreviousInputFunction;
 
 public class Convolution2D extends NeedPreviousInputFunction {
 	private static final long serialVersionUID = -4713515794669987999L;

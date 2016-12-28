@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.nyatla.kelpjava.common.NdArray;
+import jp.nyatla.kelpjava.functions.common.Function;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
 
 /**
  * 層を積み上げるこのライブラリのメインとなるクラス。 一回のForward、Backward、Updateで同時に実行される関数の集まり

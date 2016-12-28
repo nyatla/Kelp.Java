@@ -4,7 +4,6 @@ import java.io.IOException;
 
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -12,6 +11,7 @@ import jp.nyatla.kelpjava.functions.activations.Sigmoid;
 import jp.nyatla.kelpjava.functions.connections.Linear;
 import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
 import jp.nyatla.kelpjava.optimizers.MomentumSGD;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * MLPによるXORの学習
@@ -59,7 +59,7 @@ public class Test1 {
 		// 訓練結果を表示
 		System.out.println("Test Start...");
 		for (NdArray input : trainData) {
-			NdArray result = trainer.predict(nn, input);
+			NdArray result = nn.predict(input);
 			int resultIndex = JavaUtils.indexOf(result.data,JavaUtils.max(result.data));
 			System.out.println(input.data[0] + " xor " + input.data[1] + " = " + resultIndex + " " + result);
 		}
@@ -80,7 +80,7 @@ public class Test1 {
 		}
 		System.out.println("Test2 Start...");
 		for (NdArray input : trainData) {
-			NdArray result = trainer.predict(nn2, input);
+			NdArray result = nn2.predict(input);
 			int resultIndex = JavaUtils.indexOf(result.data,JavaUtils.max(result.data));
 			System.out.println(input.data[0] + " xor " + input.data[1] + " = " + resultIndex + " " + result);
 		}

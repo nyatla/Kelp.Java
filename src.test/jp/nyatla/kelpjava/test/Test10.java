@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Stack;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.connections.EmbedID;
 import jp.nyatla.kelpjava.functions.connections.LSTM;
@@ -20,6 +19,7 @@ import jp.nyatla.kelpjava.loss.LossFunction.Results;
 import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
 import jp.nyatla.kelpjava.optimizers.GradientClipping;
 import jp.nyatla.kelpjava.optimizers.SGD;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * ChainerのRNNサンプルを再現 https://github.com/pfnet/chainer/tree/master/examples/ptb

@@ -1,9 +1,9 @@
 ﻿package jp.nyatla.kelpjava.functions.activations;
 
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
-import jp.nyatla.kelpjava.functions.NeedPreviousOutputFunction;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.functions.common.NeedPreviousOutputFunction;
 
 public class Softmax extends NeedPreviousOutputFunction {
 	/**

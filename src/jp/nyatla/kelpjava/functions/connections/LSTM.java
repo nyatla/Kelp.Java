@@ -2,10 +2,10 @@
 
 import java.util.ArrayList;
 
-import jp.nyatla.kelpjava.Function;
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.IDuplicatable;
 import jp.nyatla.kelpjava.common.NdArray;
+import jp.nyatla.kelpjava.functions.common.Function;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
 
 /**
  * [Serializable]

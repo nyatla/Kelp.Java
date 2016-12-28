@@ -1,7 +1,6 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -9,6 +8,7 @@ import jp.nyatla.kelpjava.functions.activations.ReLU;
 import jp.nyatla.kelpjava.functions.connections.Linear;
 import jp.nyatla.kelpjava.loss.MeanSquaredError;
 import jp.nyatla.kelpjava.optimizers.Adam;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * MLPによるXORの学習【回帰版】 ※精度が悪く何度か実行しないと望んだ結果を得られない
@@ -54,7 +54,7 @@ public class Test2 {
 		// 訓練結果を表示
 		System.out.println("Test Start...");
 		for (NdArray val : trainData) {
-			NdArray result = trainer.predict(nn, val);
+			NdArray result = nn.predict(val);
 			System.out.println(val.data[0] + " xor " + val.data[1] + " = "
 					+ (result.data[0] > 0.5 ? 1 : 0) + " " + result);
 		}

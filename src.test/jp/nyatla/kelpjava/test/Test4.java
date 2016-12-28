@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.functions.activations.Sigmoid;
@@ -14,6 +13,7 @@ import jp.nyatla.kelpjava.io.mnist.MnistData.DataSet;
 import jp.nyatla.kelpjava.loss.LossFunction;
 import jp.nyatla.kelpjava.loss.SoftmaxCrossEntropy;
 import jp.nyatla.kelpjava.optimizers.MomentumSGD;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * MLPによるMNIST（手書き文字）の学習

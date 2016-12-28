@@ -3,6 +3,7 @@
 import java.io.Serializable;
 
 import jp.nyatla.kelpjava.common.IDuplicatable;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
 
 
 /**

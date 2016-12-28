@@ -1,8 +1,8 @@
 ﻿package jp.nyatla.kelpjava.functions.connections;
 
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.NdArray;
-import jp.nyatla.kelpjava.functions.NeedPreviousInputFunction;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.functions.common.NeedPreviousInputFunction;
 
 //    [Serializable]
     final public class Linear extends NeedPreviousInputFunction

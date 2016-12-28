@@ -1,8 +1,8 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.FunctionParameter;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.OptimizerParameter;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * [Serializable]
@@ -42,7 +42,7 @@ public class Adam extends Optimizer {
 		this.Epsilon = i_epsilon;
 	}
 
-	public void initilise(FunctionParameter[] i_functionParameters) {
+	public void addFunctionParameters(FunctionParameter[] i_functionParameters) {
 		this.optimizerParameters = new OptimizerParameter[i_functionParameters.length];
 
 		for (int i = 0; i < this.optimizerParameters.length; i++) {

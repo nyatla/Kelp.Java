@@ -1,9 +1,9 @@
 ﻿package jp.nyatla.kelpjava.functions.poolings;
 
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
-import jp.nyatla.kelpjava.functions.NeedPreviousDataFunction;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.functions.common.NeedPreviousDataFunction;
 
 /**
  * [Serializable]

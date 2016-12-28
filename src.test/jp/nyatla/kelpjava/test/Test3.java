@@ -1,7 +1,6 @@
 ﻿package jp.nyatla.kelpjava.test;
 
 import jp.nyatla.kelpjava.FunctionStack;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.Trainer;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
@@ -9,6 +8,7 @@ import jp.nyatla.kelpjava.functions.activations.Tanh;
 import jp.nyatla.kelpjava.functions.connections.Linear;
 import jp.nyatla.kelpjava.loss.MeanSquaredError;
 import jp.nyatla.kelpjava.optimizers.SGD;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * MLPによるSin関数の学習
@@ -62,8 +62,7 @@ public class Test3 {
 		System.out.println("Test Start...");
 
 		for (NdArray val : trainData) {
-			System.out.println(val.data[0] + ":"
-					+ trainer.predict(nn, val).data[0]);
+			System.out.println(val.data[0] + ":"+ nn.predict(val).data[0]);
 		}
 	}
 }

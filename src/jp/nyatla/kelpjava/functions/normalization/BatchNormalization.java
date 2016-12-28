@@ -1,9 +1,9 @@
 ﻿package jp.nyatla.kelpjava.functions.normalization;
 
-import jp.nyatla.kelpjava.Function;
-import jp.nyatla.kelpjava.FunctionParameter;
 import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
+import jp.nyatla.kelpjava.functions.common.Function;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
 
 /**
  * Chainerより移植　finetuningは未実装

@@ -1,8 +1,8 @@
 ﻿package jp.nyatla.kelpjava.optimizers;
 
-import jp.nyatla.kelpjava.FunctionParameter;
-import jp.nyatla.kelpjava.Optimizer;
 import jp.nyatla.kelpjava.OptimizerParameter;
+import jp.nyatla.kelpjava.functions.common.FunctionParameter;
+import jp.nyatla.kelpjava.optimizers.common.Optimizer;
 
 /**
  * 与えられたthresholdで頭打ちではなく、全パラメータのL2Normからレートを取り補正を行う
@@ -22,7 +22,7 @@ public class GradientClipping extends Optimizer {
 	}
 
 	@Override
-	public void initilise(FunctionParameter[] functionParameters) {
+	public void addFunctionParameters(FunctionParameter[] functionParameters) {
 		this.optimizerParameters = new OptimizerParameter[functionParameters.length];
 
 		for (int i = 0; i < this.optimizerParameters.length; i++) {

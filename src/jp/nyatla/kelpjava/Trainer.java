@@ -69,33 +69,6 @@ import jp.nyatla.kelpjava.loss.LossFunction.Result;
             return matchCount / (double)i_x.length;
         }
 
-        /**
-         * 予想を実行する（外部からの使用を想定してArrayが引数
-         * @param functionStack
-         * @param i_input
-         * @return
-         */
-        public NdArray[] predict(FunctionStack functionStack, NdArray[] i_input)
-        {
-            NdArray[] ndArrays = new NdArray[i_input.length];
-
-            for (int i = 0; i < ndArrays.length; i++)
-            {
-                ndArrays[i] = i_input[i];
-            }
-
-            return functionStack.predict(ndArrays);
-        }
-        /**
-         * 予想を実行する[非バッチ]（外部からの使用を想定してArrayが引数
-         * @param functionStack
-         * @param i_input
-         * @return
-         */
-        public NdArray predict(FunctionStack functionStack, NdArray i_input)
-        {
-            return functionStack.predict(i_input);
-        }
 
 
 

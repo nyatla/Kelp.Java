@@ -128,9 +128,8 @@ public class Test8 {
 		model.resetState();
 
 		NdArray result = NdArray.zeros(1);
-		Trainer trainer = new Trainer();
 		for (int i = 0; i < input_seq.size(); i++) {
-			result = trainer.predict(model, new NdArray(
+			result = model.predict(new NdArray(
 					new double[] { input_seq.get(i) }));
 		}
 
