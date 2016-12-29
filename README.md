@@ -1,5 +1,6 @@
 # KelpJava
 Kelp.Javaは、深層学習のライブラリKelpNetをJavaに移植したものです。
+
 KelpNetはこちら https://github.com/harujoh/KelpNet
 
 テスト1～13までの動作を確認することができます。
