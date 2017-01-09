@@ -1,5 +1,6 @@
 package jp.nyatla.kelpjava.functions.connections;
 
+import jp.nyatla.kelpjava.common.JavaUtils;
 import jp.nyatla.kelpjava.common.NdArray;
 import jp.nyatla.kelpjava.functions.common.FunctionParameter;
 import jp.nyatla.kelpjava.functions.common.NeedPreviousInputFunction;
@@ -94,47 +95,59 @@ public class Convolution2D_O1 extends NeedPreviousInputFunction {
 	}
 
 	@Override
-	protected NdArray needPreviousForward(NdArray i_input) {
+	protected NdArray needPreviousForward(NdArray i_input)
+	{
 		int outputSize = (int) Math.floor((i_input.shape[2] - this._kSize + this._pad * 2.0)/ this._stride) + 1;
 
 		double[] result = new double[this.outputCount * outputSize * outputSize];
 		int resultIndex = 0;
+		int d0=i_input.shape[0];//ch
+		int d1=i_input.shape[1];//y
+		int d2=i_input.shape[2];//x
+		int ks=this._kSize;
+		int stride=this._stride;
+		int pad=this._pad;
+		double[] w_data=this.W.data;
+		double[] input_data= i_input.data;
 
+//		double p=0;
 		for (int och = 0; och < this.outputCount; och++) {
 			// Wインデックス用
-			int outChOffset = och * this.inputCount * this._kSize * this._kSize;
-
+			int outChOffset = och * this.inputCount * ks*ks;
 			for (int oy = 0; oy < outputSize; oy++) {
+				//yのインデクス
+				int spy=oy * stride - pad;
+				int my=ks+spy;if(my>d1){my=d1;}
+				int ky=spy<0?0:spy;
 				for (int ox = 0; ox < outputSize; ox++) {
-					for (int ich = 0; ich < i_input.shape[0]; ich++) {
+					double wret=0;
+					//xのインデクス
+					int spx=ox * stride - pad;
+					int mx=ks+spx;if(mx>d2){mx=d2;}
+					int kx=((spx<0)?0:spx);
+					for (int ich = 0; ich < d0; ich++) {
 						// Wインデックス用
-						int inChOffset = ich * this._kSize * this._kSize;
-
+						int wIndexOffset = ich * ks*ks+outChOffset;
 						// inputインデックス用
-						int inputOffset = ich * i_input.shape[1] * i_input.shape[2];
-						for (int ky = 0; ky < this._kSize; ky++) {
-							int iy = oy * this._stride + ky - this._pad;
-
-							if (iy >= 0 && iy < i_input.shape[1]) {
-								for (int kx = 0; kx < this._kSize; kx++) {
-									int ix = ox * this._stride + kx - this._pad;
-
-									if (ix >= 0 && ix < i_input.shape[2]) {
-										int wIndex = outChOffset + inChOffset+ ky * this._kSize + kx;
-										int inputIndex = inputOffset + iy * i_input.shape[2] + ix;
-										result[resultIndex] += i_input.data[inputIndex] * this.W.data[wIndex];
-									}
-								}
+						int inputOffset = ich * d1 * d2;
+						for (int iy=ky; iy < my; iy++) {
+							int inputIndex = inputOffset + iy * d2;
+							int wIndex = wIndexOffset+ (iy-spy) * ks - spx ;
+							for (int ix=kx; ix < mx; ix++) {
+								wret += input_data[inputIndex+ix] * w_data[wIndex+ ix];
 							}
 						}
 					}
-					result[resultIndex] += this.b.data[och];
+//					p+=wret;
+					result[resultIndex] = wret+this.b.data[och];
 					resultIndex++;
 				}
 			}
 		}
-		return new NdArray(result, new int[] { this.outputCount, outputSize,
-				outputSize }, false);
+//		if(55.6459842585469==p){
+//			System.out.println();
+//		}
+		return new NdArray(result, new int[] { this.outputCount, outputSize,outputSize }, false);
 	}
 
 	@Override
@@ -142,35 +155,42 @@ public class Convolution2D_O1 extends NeedPreviousInputFunction {
 		double[] gx = new double[i_prevInput.length()];
 
 		int gyIndex = 0;
-
+		int pi0=i_prevInput.shape[0];
+		int pi1=i_prevInput.shape[1];
+		int pi2=i_prevInput.shape[2];
+		int ks=this._kSize;
+//		int stride=this._stride;
+//		int pad=this._pad;
+		
 		for (int och = 0; och < i_gy.shape[0]; och++) {
 			// gWインデックス用
-			int outChOffset = och * this.inputCount * this._kSize * this._kSize;
+			int outChOffset = och * this.inputCount * ks * ks;
 
 			for (int oy = 0; oy < i_gy.shape[1]; oy++) {
 				for (int ox = 0; ox < i_gy.shape[2]; ox++) {
 					double gyData = i_gy.data[gyIndex++]; // gyIndex = ch * x * y
 
-					for (int ich = 0; ich < i_prevInput.shape[0]; ich++) {
+					for (int ich = 0; ich < pi0; ich++) {
 						// gWインデックス用
-						int inChOffset = ich * this._kSize * this._kSize;
-
+						int inChOffset = ich * ks * ks;
 						// inputインデックス用
-						int inputOffset = ich * i_prevInput.shape[1] * i_prevInput.shape[2];
-
-						for (int ky = 0; ky < this._kSize; ky++) {
+						int inputOffset = ich * pi1 * pi2;
+						
+						int sx=ox * this._stride - this._pad;
+						int sy= oy * this._stride - this._pad;
+						for (int ky = 0; ky < ks; ky++) {
 							int iy = oy * this._stride + ky - this._pad;
 
-							if (iy >= 0 && iy < i_prevInput.shape[1]) {
-								for (int kx = 0; kx < this._kSize; kx++) {
-									int ix = ox * this._stride + kx - this._pad;
+							if (iy >= 0 && iy < pi1) {
+								for (int kx = 0; kx < ks; kx++) {
+									int ix =  sx + kx ;
 
-									if (ix >= 0 && ix < i_prevInput.shape[2]) {
+									if (ix >= 0 && ix < pi2) {
 										// WとgWのshapeは等しい
-										int wIndex = outChOffset + inChOffset + ky * this._kSize + kx;
+										int wIndex = outChOffset + inChOffset + ky * ks + kx;
 
 										// prevInputとgxのshapeは等しい
-										int inputIndex = inputOffset + iy * i_prevInput.shape[2] + ix;
+										int inputIndex = inputOffset + iy * pi2 + ix;
 
 										this.gW.data[wIndex] += i_prevInput.data[inputIndex] * gyData;
 
@@ -185,12 +205,17 @@ public class Convolution2D_O1 extends NeedPreviousInputFunction {
 				}
 			}
 		}
+//		double s=JavaUtils.sum(this.gW.data)+JavaUtils.sum(gx)+JavaUtils.sum(this.gb.data);
+//		if(s==-45.331699669989185){
+//			System.out.println();
+//		}
+		
 
 		return new NdArray(gx, i_prevInput.shape.clone(), false);
 	}
 
 	@Override
 	public Object deepCopy() {
-		return new Convolution2D(this);
+		return new Convolution2D_O1(this);
 	}
 }
