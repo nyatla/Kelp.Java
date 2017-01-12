@@ -41,13 +41,16 @@ class Test6 {
 				"data/mnist/t10k-labels.idx1-ubyte"));
 
 		// ネットワークの構成を FunctionStack に書き連ねる
-		FunctionStack nn = new FunctionStack(new Convolution2D(1, 32, 5, 2,
-				"l1 Conv2D"), new ReLU("l1 ReLU"), new MaxPooling(2, 2,
-				"l1 MaxPooling"), new Convolution2D(32, 64, 5, 2, "l2 Conv2D"),
-				new ReLU("l2 ReLU"), new MaxPooling(2, 2, "l2 MaxPooling"),
-				new Linear(7 * 7 * 64, 1024, "l3 Linear"), new Dropout(
-						"l3 DropOut"), new ReLU("l3 ReLU"), new Linear(1024,
-						10, "l4 Linear"));
+		FunctionStack nn = new FunctionStack(
+				new Convolution2D(1, 32, 5, 2,"l1 Conv2D"),
+				new ReLU("l1 ReLU"), new MaxPooling(2, 2,"l1 MaxPooling"),
+				new Convolution2D(32, 64, 5, 2, "l2 Conv2D"),
+				new ReLU("l2 ReLU"),
+				new MaxPooling(2, 2, "l2 MaxPooling"),
+				new Linear(7 * 7 * 64, 1024, "l3 Linear"),
+				new Dropout("l3 DropOut"),
+				new ReLU("l3 ReLU"),
+				new Linear(1024,10, "l4 Linear"));
 
 		// optimizerを宣言
 		nn.setOptimizer(new Adam());

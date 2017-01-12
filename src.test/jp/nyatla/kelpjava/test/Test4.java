@@ -39,9 +39,10 @@ public class Test4 {
 		System.out.println("Training Start...");
 
 		// ネットワークの構成を FunctionStack に書き連ねる
-		FunctionStack nn = new FunctionStack(new Linear(28 * 28, 1024,
-				"l1 Linear"), new Sigmoid("l1 Sigmoid"), new Linear(1024, 10,
-				"l2 Linear"));
+		FunctionStack nn = new FunctionStack(
+				new Linear(28 * 28, 1024,"l1 Linear"),
+				new Sigmoid("l1 Sigmoid"),
+				new Linear(1024, 10,"l2 Linear"));
 		// optimizerを宣言
 		nn.setOptimizer(new Optimizer[] { new MomentumSGD() });
 		Trainer trainer = new Trainer();
@@ -68,8 +69,7 @@ public class Test4 {
 					System.out.println("\nbatch count " + i + "/"
 							+ TRAIN_DATA_COUNT);
 					// 結果出力
-					System.out.println("total loss "
-							+ JavaUtils.average(totalLoss,i));
+					System.out.println("total loss " + JavaUtils.average(totalLoss,i));
 					System.out.println("local loss " + sumLoss);
 
 					System.out.println("\nTesting...");
@@ -78,8 +78,7 @@ public class Test4 {
 					DataSet datasetY = teach.getRandomDataSet(TEST_DATA_COUNT);
 
 					// テストを実行
-					double accuracy = trainer.accuracy(nn, datasetY.image,
-							datasetY.label);
+					double accuracy = trainer.accuracy(nn, datasetY.image,datasetY.label);
 					System.out.println("accuracy " + accuracy);
 				}
 			}
